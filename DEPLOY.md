@@ -25,26 +25,46 @@ Open the preview URL and check both routes (`/` and
 
 ## 2. Copy the build to the server
 
-Copy the contents of `dist/` to `/var/www/portfolio/dist` on the Hetzner box,
-using WinSCP or `scp`:
+**First deploy only:** create the target directory on the server before
+copying anything into it:
+
+```bash
+ssh user@your-server 'sudo mkdir -p /var/www/portfolio/dist && sudo chown user /var/www/portfolio/dist'
+```
+
+Then copy the contents of `dist/` to `/var/www/portfolio/dist` on the
+Hetzner box, using WinSCP or `scp`:
 
 ```bash
 scp -r dist/* user@your-server:/var/www/portfolio/dist/
 ```
 
 (Or drag-and-drop the same folder contents with WinSCP, if that's your usual
-tool.)
+tool.) For every deploy after the first, see the Rollback section below —
+rename the existing `dist` to `dist.bak` before copying the new build in, so
+a bad deploy can be swapped back instantly.
 
 ## 3. Place the nginx config
 
-Copy `nginx.conf.example` to the server's nginx sites directory (commonly
-`/etc/nginx/sites-available/portfolio`), edit `server_name` to the real
-domain, and enable it:
+`nginx.conf.example` lives in this repo, on your local machine — it has to
+be transferred to the server before it can be installed there. Either copy
+it over first:
 
 ```bash
-sudo cp nginx.conf.example /etc/nginx/sites-available/portfolio
+scp nginx.conf.example user@your-server:~/nginx.conf.example
+```
+
+then, on the server, edit `server_name` to the real domain and enable it:
+
+```bash
+sudo cp ~/nginx.conf.example /etc/nginx/sites-available/portfolio
 sudo ln -s /etc/nginx/sites-available/portfolio /etc/nginx/sites-enabled/portfolio
 ```
+
+(or paste the edited contents directly into
+`/etc/nginx/sites-available/portfolio` with an editor over SSH — whichever
+is easier; the point is that `nginx.conf.example` alone, on your local
+machine, does nothing until it's on the server.)
 
 ## 4. Validate and reload nginx
 

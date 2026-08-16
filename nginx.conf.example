@@ -26,18 +26,29 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-    # Hashed assets: cache hard. Vite fingerprints every JS/CSS chunk by
-    # content hash, so a new deploy always ships new filenames — a 1-year
-    # cache here can never serve stale code.
-    location /assets/ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
+    # Hashed assets: cache hard. Vite fingerprints every JS chunk by content
+    # hash, so a new deploy always ships new filenames — a 1-year cache here
+    # can never serve stale code. `^~` makes this a "preferential" prefix
+    # match, so it wins over the regex location below for anything under
+    # /assets/ regardless of extension (plain prefix locations lose to regex
+    # locations in nginx's matching order; `^~` is what restores intent here
+    # — today dist/assets/ is JS-only, but this keeps it correct if a hashed
+    # .svg or .webp ever lands there too). A single Cache-Control header
+    # (not also `expires`, which would silently add a second one) keeps the
+    # response to one unambiguous cache directive.
+    location ^~ /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
     }
 
-    # Media and fonts: cache long, they are content-addressed by name
+    # Media and fonts: these are STABLE, UNHASHED filenames (not
+    # content-addressed) — replacing /media/hero-background.webp in place
+    # means some visitors keep serving the old bytes for up to 30 days. That
+    # is a deliberate trade for a mostly-static portfolio, not an oversight;
+    # if you replace a file in place and need it to update immediately,
+    # rename it (and update the reference) instead of relying on a shorter
+    # cache window.
     location ~* \.(woff2|mp4|webm|webp|jpg|png|svg)$ {
-        expires 30d;
-        add_header Cache-Control "public";
+        add_header Cache-Control "public, max-age=2592000";
     }
 
     # index.html must never be cached, or deploys appear not to land
@@ -46,6 +57,11 @@ server {
     }
 
     gzip on;
-    gzip_types text/css application/javascript image/svg+xml application/json;
+    # This build emits zero CSS (Emotion injects styles at runtime) — JS is
+    # the entire compressible payload. `text/javascript` is included because
+    # recent nginx `mime.types` maps `.js` to `text/javascript`, not
+    # `application/javascript`; omitting it means every bundle ships
+    # uncompressed on such a server (roughly 3x the transfer size).
+    gzip_types text/css text/javascript application/javascript image/svg+xml application/json;
     gzip_min_length 1024;
 }

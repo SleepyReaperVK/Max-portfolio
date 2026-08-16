@@ -11,7 +11,7 @@ at [`docs/original-brief.md`](docs/original-brief.md).
 
 ## Stack
 
-- **React 18** + **React Router v7** (two routes, one lazy-loaded)
+- **React 19** + **React Router v7** (two routes, one lazy-loaded)
 - **MUI v9.3.1** + **Emotion** for styling — no CSS files, no styled-components
 - **Vite 8** for dev server and build (manual vendor/MUI chunk splitting, see `vite.config.js`)
 - **framer-motion** for the single shared reveal-on-scroll primitive (`AnimatedReveal`)
@@ -19,7 +19,7 @@ at [`docs/original-brief.md`](docs/original-brief.md).
 
 ## Prerequisites
 
-- **Node 20.19+** (or 22.12+) — matches Vite 8's own engine requirement
+- **Node 20.19+** (or 22.12+) — matches Vite 8's own engine requirement; enforced via the `engines` field in `package.json`
 - **ffmpeg + ffprobe on PATH** — only needed to run the media pipeline (`npm run media`); not needed for `dev`/`build`/`preview`
 
 ## Install
@@ -35,10 +35,10 @@ npm ci
 | `npm run dev` | Vite dev server with HMR |
 | `npm run build` | Production build to `dist/` |
 | `npm run preview` | Serves the built `dist/` locally, for a final pre-deploy check |
-| `npm run media` | Runs `media:fetch` then `media:optimize` — re-download and re-encode source media (see below); not part of the normal dev loop |
-| `npm run media:fetch` | Downloads every media asset referenced by `content-raw/*.json` (the Notion scrape) into `media-src/`. Notion's asset URLs are signed and expire, so this only works while they're still valid — it is not re-runnable against the live Notion page indefinitely |
+| `npm run media` | Runs `media:fetch` then `media:optimize`. **This was a one-shot import script, not a repeatable content workflow — do not run it to update an existing image** (see "Known inconsistency" below and the media:fetch row). It has no purpose left once `media-src/` and `public/media/` are in their current state |
+| `npm run media:fetch` | Downloaded every media asset referenced by `content-raw/*.json` (the Notion scrape) into `media-src/`, once, during initial content import. Notion's asset URLs are signed and expired long ago, so **this can no longer run to completion** — it hard-exits on the first failed download (`fetch-media.mjs:110`/`115`). It also has no skip-if-exists guard, so even if the URLs still worked it would silently overwrite any manual replacement already sitting in `media-src/`. Kept for provenance/reference only |
 | `npm run media:optimize` | Converts everything in `media-src/` into self-hosted, size-budgeted assets under `public/media/` (GIF → MP4 + JPG poster, PNG/JPEG → WebP) and regenerates `src/content/mediaManifest.js`. Idempotent: unchanged sources are skipped via a content-hash cache, so re-running doesn't dirty the git tree |
-| `npm run check:theme` | Custom guard script (`scripts/check-theme.mjs`) — scans `src/components`, `src/pages`, `src/content` line-by-line for hardcoded hex colors, `rgb()/rgba()`, literal font families, literal px font sizes, and literal animation durations. It enforces the project's one hard styling rule: **all design values come from the MUI theme (`src/theme/`), never from a component, page, or content string.** A line can opt out with a `check-theme-ignore` comment when a literal value is genuinely unavoidable (rare) |
+| `npm run check:theme` | Custom guard script (`scripts/check-theme.mjs`) — scans `src/components`, `src/pages`, `src/content` line-by-line and flags the five most common hardcoded-value leaks: hex colors, `rgb()/rgba()`, literal font families, literal px font sizes, and literal animation durations. It does **not** catch named CSS colors (`red`), `hsl()`, hardcoded spacing, or shadows, and it does not scan `index.html`, `src/theme/**`, `vite.config.js`, or `public/**` at all (those are the theme's own definitions and are exempt by design). Within its scope, the rule it enforces is: **design values come from the MUI theme (`src/theme/`), not from a component, page, or content string.** A line can opt out with a `check-theme-ignore` comment when a literal value is genuinely unavoidable (rare) |
 
 ## Project structure
 
@@ -55,6 +55,9 @@ npm ci
 | `content-raw/` | Raw Notion scrape (JSON), one file per project section. **Provenance only — not shipped** (read by `media:fetch`, never imported by app code) |
 | `media-src/` | Original downloaded media before optimization. **Provenance only — not shipped**, gitignored |
 | `public/media/` | The actual optimized, self-hosted media the site serves (89 files, ~24 MB total) |
+| `public/fonts/` | Self-hosted `.woff2` files, loaded via the `@font-face` rules in `src/theme/components.js`. This is how fonts actually ship — `@fontsource/cinzel`/`@fontsource/inter` are devDependencies used only to source these files, not runtime dependencies |
+| `public/favicon.svg`, `public/robots.txt` | Static, unprocessed — copied to `dist/` as-is by Vite |
+| `docs/` | `original-brief.md` (the original project brief) plus the `superpowers/` spec and plan this project was built from |
 
 ## Routes
 
@@ -66,11 +69,31 @@ npm ci
 
 Components never hold copy or media references directly — the flow is:
 
-1. **Edit copy or structured data in `src/content/`** (`siteConfig.js`, `about.js`, `skills.js`, `projects.js`, and the case-study content modules). Components read from these; you should never need to touch a component to change wording, a link, or which project is featured.
-2. **Media is indirected through two layers:**
-   - `src/content/mediaManifest.js` — auto-generated, maps a semantic key (e.g. `hero-background`) to the actual file(s) under `public/media/` plus its real intrinsic width/height (used to reserve layout space and avoid CLS). **Do not hand-edit this file** — it's regenerated by `npm run media:optimize`.
-   - `siteConfig.media` — a further layer of indirection mapping *slots* (`heroBackground`, `portrait`, `projectCover`, `caseStudyHero`, `ogCover`) to manifest keys. Content modules and components reference the slot name via `<MediaFrame mediaKey="..." />`, never the manifest key or file path directly.
-3. **To swap an image**, either replace the source in `media-src/` and re-run `npm run media`, or drop a new file straight into `public/media/` and add/adjust its entry in `mediaManifest.js` by hand for a one-off (not recommended long-term — the next `npm run media` will overwrite hand edits).
+1. **Edit copy or structured data in `src/content/`** (`siteConfig.js`, `about.js`, `skills.js`, `projects.js`, and the case-study content modules under `src/content/prayForPlagues/`). Components read from these; you should never need to touch a component to change wording, a link, or which project is featured.
+
+2. **`src/content/mediaManifest.js`** is the bottom layer: auto-generated by `npm run media:optimize`, it maps a manifest key (e.g. `hero-background`) to the actual file(s) under `public/media/` plus real intrinsic width/height (used to reserve layout space and avoid CLS). `MediaFrame` (the component that renders all media) always receives a resolved manifest key as its `mediaKey` prop and looks it up directly — `mediaManifest[mediaKey]`. **Do not hand-edit this file** — the next `npm run media:optimize` overwrites it.
+
+3. **`siteConfig.media`** sits above the manifest for *some* content, not all of it. It maps five named slots (`heroBackground`, `portrait`, `projectCover`, `caseStudyHero`, `ogCover`) to manifest keys. Two content fields store a slot name that the **page** resolves before handing a manifest key down to `MediaFrame`:
+   - `projects[].cover` (`projects.js:8`, value `'projectCover'`) — resolved in `Home.jsx`
+   - `prayForPlagues.hero.src` (`prayForPlagues/index.js:12`, value `'caseStudyHero'`) — resolved in `PrayForPlagues.jsx`
+
+   Everything else that reaches `MediaFrame` — the ~30 case-study gallery images (declared as `{ key: 'ai-boss-data-asset', ... }` etc. in the `prayForPlagues/*.js` content modules, passed straight through by `MediaGallery`) — uses a raw manifest key directly and never touches `siteConfig.media` at all.
+
+4. **To swap an image:**
+   - **Cheapest, for a live slot (`heroBackground`, `ogCover`, `projectCover`, `caseStudyHero`):** repoint the slot at a different existing manifest key, e.g. `siteConfig.media.projectCover = 'some-other-key'` — no rebuild of media needed if that key's file already exists.
+   - **For anything (a slot's target key, `about.js`'s `portrait`, or a raw gallery key):** replace the source in `media-src/` and re-run `npm run media:optimize` (see "Known inconsistency" below for why `npm run media` is *not* what you want here), which re-derives `mediaManifest.js` for that key without changing what any content module points at.
+   - **One-off / no ffmpeg available:** drop a file straight into `public/media/` and hand-edit its entry in `mediaManifest.js` — not recommended long-term, since the next `npm run media:optimize` regenerates the whole file and will overwrite the hand edit unless the underlying source in `media-src/` was updated too.
+
+### Known inconsistency
+
+The `siteConfig.media` indirection layer is applied unevenly, and this README describes that as-found rather than as originally intended (re-wiring it now was ruled out of scope for a documentation-only task):
+
+- `siteConfig.media.portrait` is **dead** — `about.js:8` sets `portrait: 'portrait'`, but `Home.jsx` passes it to `AboutSection` as `portraitKey={about.portrait}`, straight to `MediaFrame`, never through `siteConfig.media`. **Editing `siteConfig.media.portrait` does nothing.** To change the portrait, edit `about.js`'s `portrait` field (a manifest key) directly.
+- `siteConfig.media.heroBackground` and `siteConfig.media.ogCover` **are** read directly (`Home.jsx`, `PrayForPlagues.jsx`) — editing those does work.
+- `siteConfig.media.projectCover` and `siteConfig.media.caseStudyHero` are read only because `projects.js` and `prayForPlagues/index.js` store the slot *name* as a string and the page looks it up — editing the slot value works for these two.
+- Case-study gallery images (all `prayForPlagues/*.js` content modules' `media: [...]` arrays) bypass slots entirely — edit the `key:` field directly to point at a different manifest entry.
+
+If you're not sure which one applies to the image you're changing: **`siteConfig.media` is live for `heroBackground`, `ogCover`, `projectCover`, and `caseStudyHero` — edit the slot there. It is dead for `portrait` — edit the manifest key in `about.js` directly instead. For any gallery/system-breakdown image, always edit the manifest key in its content module directly — `siteConfig.media` was never in that path.**
 
 ## Known placeholders
 
