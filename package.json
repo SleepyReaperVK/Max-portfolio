@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check:theme": "node scripts/check-theme.mjs"
+    "check:theme": "node scripts/check-theme.mjs",
+    "media:fetch": "node scripts/fetch-media.mjs",
+    "media:optimize": "node scripts/optimize-media.mjs",
+    "media": "npm run media:fetch && npm run media:optimize"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
