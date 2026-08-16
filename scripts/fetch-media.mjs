@@ -29,6 +29,9 @@ const STOCK_ART_MARKERS = [
   'Product_Banner-Standard_Edition',
   'Storage_Bloodborne_Wiki_Fandom.png',
   'r_bloodborne.png',
+  // Official Dark Souls III promotional key art (Lothric / Soul of Cinder),
+  // confirmed by review — not project evidence, licensing risk if shipped.
+  '7da5911f451a4d399d9739416bec1535.jpg',
 ]
 
 function isExcluded(url) {

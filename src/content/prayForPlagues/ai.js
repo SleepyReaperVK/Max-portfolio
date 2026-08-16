@@ -57,7 +57,7 @@ const ai = {
         'Boss fights have a 2-phase structure, where upon transitioning to the next phase, the boss changes its behavior, attack pattern, and gains new abilities. In phase 1, the enemy launches close-range attacks that can be parried, with some attacks using motion warping for a more challenging encounter. Once the enemy’s health has dropped below a certain amount, phase 2 begins. When phase 2 begins, the enemy gains unparryable attacks that have an AOE damage application effect extending along with the VFX, and additionally gains the ability to launch projectiles at the player.',
       ],
       media: [
-        { key: 'ai-attack-manager-config', alt: 'Attack Manager component configuration on an enemy', caption: 'Attack Manager component setup' },
+        { key: 'ai-attack-manager-config', alt: 'Attack montage notifies driving combo windows, motion warping, and weapon collision toggling', caption: 'Attack montage notify setup' },
         { key: 'ai-attack-manager-data', alt: 'Attack Manager data asset defining attack conditions and weights', caption: 'Attack Manager data asset' },
         { key: 'ai-boss-phase-1', alt: 'Boss phase 1 close-range parryable attacks, including a motion-warped attack', caption: 'Phase 1' },
         { key: 'ai-boss-phase-transition', alt: 'Boss transitioning from phase 1 to phase 2 after dropping below a health threshold', caption: 'Phase 1 → Phase 2' },
@@ -69,9 +69,7 @@ const ai = {
       paragraphs: [
         'Enemies support multiple attack categories: melee combos (1–2 hit for simple enemies, complex chains for bosses), AOE abilities (ground slams, shockwaves, magic bursts), ranged projectiles (long-range units), buffs (damage amplification, speed boosts, phase transitions), and enemy summoning. These abilities are data-driven and integrated into the same attack pipeline used by the player, ensuring systemic consistency.',
       ],
-      media: [
-        { key: 'ai-attack-types', alt: 'Enemy demonstrating melee, AOE, ranged, and buff attack types', caption: 'Attack types and ability integration' },
-      ],
+      media: [],
     },
     {
       heading: 'AI Debugging Tools',

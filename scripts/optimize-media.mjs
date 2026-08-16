@@ -4,9 +4,23 @@
 // src/content/mediaManifest.js mapping every content media `key` to its
 // output file(s) + real pixel dimensions.
 //
-// GIF        -> <key>.mp4 (H.264) + <key>.webm (VP9) + <key>.jpg poster
+// GIF        -> <key>.mp4 (H.264 only — see Ruling 5, no WebM) + <key>.jpg poster
 // PNG/JPEG   -> <key>.webp (max width 1600, quality 82)
 // og-cover   -> also gets a .jpg fallback, cropped to a social-card ratio
+//
+// Source resolution is keyed off a hash of the *original Notion URL*, not the
+// bare downloaded filename — two distinct source images can share the same
+// generic filename (e.g. two different "ScreenShot00001.png"), and which one
+// gets a plain vs. hash-suffixed name in media-src/ depends on fetch order.
+// Hashing the URL directly removes that fragility (see review round 1,
+// Minor 7).
+//
+// Idempotent: a per-key cache (media-src/.optimize-cache.json) records the
+// source file's content hash and the exact manifest entry produced. A
+// second run with unchanged sources re-uses the cached entry and touches no
+// output file, so re-running never dirties the git tree (review round 1,
+// Important 4). Any encode that does run also passes bitexact flags as a
+// second line of defense against non-deterministic encoder output.
 //
 // If ffmpeg/ffprobe are not on PATH, falls back to copying sources through
 // unchanged (loud warning), so the manifest still gets written.
@@ -19,116 +33,155 @@ import {
   copyFileSync,
   readdirSync,
   statSync,
+  existsSync,
 } from 'node:fs'
 import path from 'node:path'
+import crypto from 'node:crypto'
 
 const ROOT = process.cwd()
 const SRC_DIR = path.join(ROOT, 'media-src')
 const OUT_DIR = path.join(ROOT, 'public', 'media')
 const CONTENT_DIR = path.join(ROOT, 'src', 'content')
 const MANIFEST_PATH = path.join(CONTENT_DIR, 'mediaManifest.js')
+const DOWNLOAD_MANIFEST_PATH = path.join(SRC_DIR, 'download-manifest.json')
+const CACHE_PATH = path.join(SRC_DIR, '.optimize-cache.json')
 
 mkdirSync(OUT_DIR, { recursive: true })
 
-// ---------------------------------------------------------------------------
-// Source mapping — content key -> media-src filename.
-//
-// Derived mechanically from content-raw/*.json media[] order matched
-// 1:1 against each content module's media[] declaration order (verified:
-// every section's item count matches the corresponding raw file's non-
-// excluded media count exactly). Two entries were reassigned based on
-// visual inspection where the mechanical/positional mapping produced a
-// worse fit than the alternative — see task-2-report.md "Key mapping
-// decisions" for the reasoning:
-//   - ai-attack-manager-data   -> Screenshot_2026-08-14_160258.png (was ...161259)
-//   - ai-attack-manager-config -> Screenshot_2026-08-14_161259.png (was ...160258)
-// ---------------------------------------------------------------------------
-
-const GIF_SOURCES = {
-  // combat
-  'combat-state-unequipped': 'PrayForPlagues_Unequipped_showcase-ezgif.com-video-to-gif-converter.gif',
-  'combat-state-light-weapon': 'PrayForPlagues_Equipped_1handed-ezgif.com-video-to-gif-converter.gif',
-  'combat-state-heavy-weapon': 'PrayForPlagues_2Handed-ezgif.com-video-to-gif-converter.gif',
-  'combat-hit-reaction-unarmed': 'PrayForPlagues_HitReact_Player-ezgif.com-video-to-gif-converter.gif',
-  'combat-damage-player': 'PrayForPlagues_DamagAplly-ezgif.com-video-to-gif-converter.gif',
-  'combat-damage-hostile': 'OnlyHostileDamageApplication-ezgif.com-video-to-gif-converter.gif',
-  'combat-parry': 'PrayForPlagues_Parry-ezgif.com-video-to-gif-converter.gif',
-  'combat-lock-on-switch': 'PrayForPlagues_LockOn-ezgif.com-video-to-gif-converter.gif',
-  'combat-lock-on-death-switch': 'PrayForPlagues_LockOnSwitchAfterKill-ezgif.com-video-to-gif-converter.gif',
-  'combat-camera-reset': 'PrayForPlagues_CameraReset-ezgif.com-video-to-gif-converter.gif',
-  'combat-foot-ik': 'PrayForPlagues_FootIK-ezgif.com-video-to-gif-converter.gif',
-
-  // ai
-  'ai-idle-to-engage': 'PrayForPlagues_EnemyBossEngage-ezgif.com-video-to-gif-converter.gif',
-  'ai-strafe-attack': 'PrayForPlagues_AIAttack-ezgif.com-video-to-gif-converter.gif',
-  'ai-patrol-loop': 'PrayForPlagues_AIPatrol-ezgif.com-video-to-gif-converter.gif',
-  'ai-player-spotted': 'PrayForPlagues_PlayerSpotted-ezgif.com-video-to-gif-converter-1-.gif',
-  'ai-vision-perception': 'CryptRaiderPreviewNetMode_Standalone064-bit_PCD3DSM62026-08-1318-35-18-ezgif.com-video-to-gif-converter.gif',
-  'ai-crowd-avoidance': 'Crowd_Avoid1-ezgif.com-video-to-gif-converter.gif',
-  'ai-boss-phase-1': 'PrayForPlagues_Phase1-ezgif.com-video-to-gif-converter.gif',
-  'ai-boss-phase-transition': 'PrayForPlagues_Phase2Begin-ezgif.com-video-to-gif-converter.gif',
-  'ai-boss-phase-2': 'VideoProject7-ezgif.com-video-to-gif-converter.gif',
-  'ai-attack-types': 'CryptRaider-UnrealEditor2026-08-1519-39-57-ezgif.com-video-to-gif-converter.gif',
-
-  // interaction
-  'interaction-pickup-item': 'PrayForPlagues_Pickup-ezgif.com-video-to-gif-converter.gif',
-  'interaction-open-door': 'PrayForPlagues_OpenDoor-ezgif.com-video-to-gif-converter.gif',
-  'interaction-open-locked-door': 'PrayForPlagues_OpendoorWithKey-ezgif.com-video-to-gif-converter.gif',
-  'interaction-inspect-note': 'PrayForPlagues_NoteRead-ezgif.com-video-to-gif-converter.gif',
-  'interaction-open-chest': 'PrayForPlagues_OpenChest-ezgif.com-video-to-gif-converter.gif',
-  'interaction-pickup-heavy-weapon': 'PrayForPlagues_HeavyWeaponEquipped_Pickup-ezgif.com-video-to-gif-converter.gif',
-
-  // inventory
-  'inventory-category-showcase': 'PrayForPlagues_ItemCategories-ezgif.com-video-to-gif-converter.gif',
-  'inventory-stack-overflow': 'PrayForPlagues_ItemSentToStash-ezgif.com-video-to-gif-converter.gif',
-  'inventory-action-context-menu': 'PrayForPlagues_OperateItem-ezgif.com-video-to-gif-converter.gif',
-  'inventory-key-item-usage': 'PrayForPlagues_UseKeyItem-ezgif.com-video-to-gif-converter.gif',
+function sha1(input) {
+  return crypto.createHash('sha1').update(input).digest('hex')
 }
 
-const IMAGE_SOURCES = {
+function urlHash(url) {
+  return sha1(url).slice(0, 12)
+}
+
+// ---------------------------------------------------------------------------
+// Resolve every source URL's hash -> the actual file fetch-media.mjs wrote
+// it to in media-src/, via download-manifest.json (url -> filename).
+// ---------------------------------------------------------------------------
+const downloadManifest = JSON.parse(readFileSync(DOWNLOAD_MANIFEST_PATH, 'utf8'))
+const HASH_TO_FILE = {}
+for (const [url, file] of Object.entries(downloadManifest)) {
+  HASH_TO_FILE[urlHash(url)] = file
+}
+
+function resolveSourceFile(hash) {
+  const file = HASH_TO_FILE[hash]
+  if (!file) {
+    throw new Error(`No downloaded file for url-hash ${hash} — re-run \`npm run media:fetch\`.`)
+  }
+  const full = path.join(SRC_DIR, file)
+  if (!existsSync(full)) {
+    throw new Error(`media-src/${file} is missing on disk (url-hash ${hash}) — re-run \`npm run media:fetch\`.`)
+  }
+  return full
+}
+
+// ---------------------------------------------------------------------------
+// Content key -> source URL hash. Derived mechanically from content-raw/*.json
+// media[] order matched 1:1 against each content module's media[] declaration
+// order (every section's item count matches the raw file's non-excluded
+// media count exactly). Two AI entries were reassigned after visual review —
+// see task-2-report.md "Key mapping decisions" / round-1 fix notes.
+// ---------------------------------------------------------------------------
+
+const GIF_SOURCES_HASH = {
   // combat
-  'combat-players-stats': 'Screenshot_2026-08-04_172000.png',
-  'combat-weapons-stats': 'Screenshot_2026-08-04_172245.png',
-  'combat-damage-calc-ge': 'Screenshot_2026-08-04_172749.png',
-  'combat-weapon-data': 'Screenshot_2026-08-04_202327.png',
+  'combat-state-unequipped': '3e8b01366b60',
+  'combat-state-light-weapon': 'db55c8c37694',
+  'combat-state-heavy-weapon': '89da03a4688f',
+  'combat-hit-reaction-unarmed': '425ab8aff056',
+  'combat-damage-player': 'c4a2d835668c',
+  'combat-damage-hostile': '05c07b39ca06',
+  'combat-parry': '951aaa1debd4',
+  'combat-lock-on-switch': '24b4bb372a91',
+  'combat-lock-on-death-switch': '1b6164cdaffc',
+  'combat-camera-reset': '194201f45df0',
+  'combat-foot-ik': '4243d356b9cd',
 
   // ai
-  'ai-boss-data-asset': 'Screenshot_2026-08-10_221837.png',
-  'ai-attack-manager-data': 'Screenshot_2026-08-14_160258.png',
-  'ai-attack-manager-config': 'Screenshot_2026-08-14_161259.png',
+  'ai-idle-to-engage': 'c8646cba6481',
+  'ai-strafe-attack': 'a3f3a8008693',
+  'ai-patrol-loop': '6fb4213a2a11',
+  'ai-player-spotted': '59b356f3b39a',
+  'ai-vision-perception': 'd6c0edf30816',
+  'ai-crowd-avoidance': '90b1a1b8d806',
+  'ai-boss-phase-1': '43826968afe8',
+  'ai-boss-phase-transition': '3df7fca26305',
+  'ai-boss-phase-2': '1ec6c18fd0a2',
+  // ai-attack-types dropped (Important 3 — Unreal Editor screen recording
+  // with a visible "For testing in editor onlt!!" dev note, not an in-game
+  // attack showcase).
 
-  // audio
-  'audio-gameplay-video-preview': 'd50e818b213971ee83500fadd4a2d6b11a63ac0ad3a2aeba.avif',
-  'audio-boss-soundtrack-manager': 'Screenshot_2026-08-08_223536.png',
-  'audio-dynamic-footstep': 'Screenshot_2026-08-08_223431.png',
-  'audio-combat-hit-feedback': 'Screenshot_2026-08-08_223730.png',
+  // interaction
+  'interaction-pickup-item': 'eb272a02a752',
+  'interaction-open-door': '4845f92ddce7',
+  'interaction-open-locked-door': '671a1f44b06c',
+  'interaction-inspect-note': '3a52bbd6ee70',
+  'interaction-open-chest': 'e6194a429559',
+  'interaction-pickup-heavy-weapon': '07671dddd1eb',
 
   // inventory
-  'inventory-data-table-summary': 'Screenshot_2026-08-07_113226.png',
-  'inventory-data-table-detail': 'Screenshot_2026-08-07_113536.png',
+  'inventory-category-showcase': 'd54350301bea',
+  'inventory-stack-overflow': 'bd953db44a84',
+  'inventory-action-context-menu': '048272340422',
+  'inventory-key-item-usage': '753ae67df9ab',
+}
+
+const IMAGE_SOURCES_HASH = {
+  // combat
+  'combat-players-stats': '732c211c468a',
+  'combat-weapons-stats': 'e84993f4b63c',
+  'combat-damage-calc-ge': 'adf603b84510',
+  'combat-weapon-data': '4a51c76badea',
+
+  // ai
+  'ai-boss-data-asset': 'c3b92b2775ed',
+  'ai-attack-manager-data': 'e72ac56724ad',
+  'ai-attack-manager-config': 'e0eed89a6ab8',
+
+  // audio (fixed mapping — round 1 review caught an off-by-one; see report)
+  'audio-boss-soundtrack-manager': '0c14000b96a4', // BP_DarkKnight_MusicManager
+  'audio-dynamic-footstep': 'bcf95021b608', // Footstep Data Asset (Stone surface tag)
+  // audio-gameplay-video-preview dropped (decorative skull/headphones cover
+  // art, not a gameplay frame). audio-combat-hit-feedback dropped (no
+  // scraped image depicts hit VFX/SFX/camera shake).
+
+  // inventory
+  'inventory-data-table-summary': '1d08a10866b4',
+  'inventory-data-table-detail': '1775f4301a25',
 
   // level design
-  'level-design-prison-section': 'Screenshot_2026-08-09_012618.png',
-  'level-design-first-floor-entrance': 'ScreenShot00000.png',
-  'level-design-first-floor-main-hall': 'ScreenShot00001-46f3530f.png',
-  'level-design-first-floor-idol-of-death': 'ScreenShot00004.png',
-  'level-design-first-floor-tunnel': 'ScreenShot00015.png',
-  'level-design-first-floor-second-entrance': 'ScreenShot00016.png',
-  'level-design-second-floor-entrance': 'ScreenShot00007.png',
-  'level-design-second-floor-balcony': 'ScreenShot00008.png',
-  'level-design-third-floor-bridge': 'ScreenShot00011.png',
-  'level-design-third-floor-prayer-room': 'ScreenShot00012.png',
-  'level-design-third-floor-chamber-entrance': 'ScreenShot00014.png',
-  'level-design-dungeon-environment-1': 'ScreenShot00018.png',
-  'level-design-dungeon-environment-2': 'ScreenShot00019.png',
-  'level-design-dungeon-environment-3': 'ScreenShot00021.png',
+  'level-design-prison-section': 'e0a0356df7ea',
+  'level-design-first-floor-entrance': 'f7fd1bfd9907',
+  'level-design-first-floor-main-hall': '46f3530fb79e',
+  'level-design-first-floor-idol-of-death': 'f6f4a58990dc',
+  'level-design-first-floor-tunnel': '834a839f79bd',
+  'level-design-first-floor-second-entrance': 'd6c1ee7ecb56',
+  'level-design-second-floor-entrance': '42fa05c34d71',
+  'level-design-second-floor-balcony': 'd615f028d9c6',
+  'level-design-third-floor-bridge': 'b94d7b89e5b3',
+  'level-design-third-floor-prayer-room': '17c74b654cf5',
+  'level-design-third-floor-chamber-entrance': '530234cc2d05',
+  'level-design-dungeon-environment-1': '65c7a44a4465',
+  'level-design-dungeon-environment-2': '19bb970dc7d6',
+  'level-design-dungeon-environment-3': '021507f84204',
 
   // page-level (siteConfig.media / about.js)
-  portrait: '1768219767441',
-  'hero-background': 'ScreenShot00001.png',
-  'project-cover': 'ScreenShot00001.png',
-  'case-study-hero': 'ScreenShot00001.png',
-  'og-cover': 'ScreenShot00001.png',
+  portrait: '41fe79b2ef6e',
+  'hero-background': '5a153634a049',
+  'project-cover': '5a153634a049', // same physical image as hero-background
+  'case-study-hero': '5a153634a049', // same physical image as hero-background
+  'og-cover': '5a153634a049', // derivative crop of the same source, own output
+}
+
+// Keys that are the exact same physical image as another key (same URL hash)
+// get their manifest entry copied from the "canonical" key instead of being
+// re-encoded into a second identical file (Minor 7).
+const IMAGE_ALIASES = {
+  'project-cover': 'hero-background',
+  'case-study-hero': 'hero-background',
 }
 
 // The 5 page-level keys named directly by src/content/siteConfig.js `media`
@@ -138,10 +191,11 @@ const IMAGE_SOURCES = {
 // a fixed, explicitly-specified contract (see task-2-brief.md).
 const PAGE_LEVEL_KEYS = ['hero-background', 'portrait', 'project-cover', 'case-study-hero', 'og-cover']
 
-const VIDEO_SCALE_WIDTH = 480
+const VIDEO_SCALE_WIDTH = 720
 const MP4_CRF_LADDER = [26, 30, 34, 38, 42]
-const WEBM_CRF_LADDER = [36, 42, 46, 50, 54]
 const MAX_CLIP_BYTES = 3 * 1024 * 1024
+const BITEXACT_INPUT_FLAGS = ['-fflags', '+bitexact']
+const BITEXACT_OUTPUT_FLAGS = ['-flags:v', '+bitexact']
 
 function hasBinary(bin) {
   try {
@@ -177,25 +231,14 @@ function fileSize(file) {
 function encodeMp4(src, out, width, crf) {
   execFileSync('ffmpeg', [
     '-y', '-v', 'error',
+    ...BITEXACT_INPUT_FLAGS,
     '-i', src,
     '-movflags', '+faststart',
     '-pix_fmt', 'yuv420p',
     '-vf', `scale=${width}:-2`,
     '-c:v', 'libx264',
     '-crf', String(crf),
-    out,
-  ])
-}
-
-function encodeWebm(src, out, width, crf) {
-  execFileSync('ffmpeg', [
-    '-y', '-v', 'error',
-    '-i', src,
-    '-pix_fmt', 'yuv420p',
-    '-vf', `scale=${width}:-2`,
-    '-c:v', 'libvpx-vp9',
-    '-crf', String(crf),
-    '-b:v', '0',
+    ...BITEXACT_OUTPUT_FLAGS,
     out,
   ])
 }
@@ -203,6 +246,7 @@ function encodeWebm(src, out, width, crf) {
 function encodePoster(src, out) {
   execFileSync('ffmpeg', [
     '-y', '-v', 'error',
+    ...BITEXACT_INPUT_FLAGS,
     '-i', src,
     '-vframes', '1',
     '-vf', "scale='min(1280,iw)':-2",
@@ -213,6 +257,7 @@ function encodePoster(src, out) {
 function encodeWebp(src, out, maxWidth, quality) {
   execFileSync('ffmpeg', [
     '-y', '-v', 'error',
+    ...BITEXACT_INPUT_FLAGS,
     '-i', src,
     '-vf', `scale='min(${maxWidth},iw)':-2:flags=lanczos`,
     '-quality', String(quality),
@@ -224,6 +269,7 @@ function encodeJpeg(src, out, maxWidth, extraVf) {
   const vf = extraVf ? `${extraVf},scale='min(${maxWidth},iw)':-2` : `scale='min(${maxWidth},iw)':-2`
   execFileSync('ffmpeg', [
     '-y', '-v', 'error',
+    ...BITEXACT_INPUT_FLAGS,
     '-i', src,
     '-vf', vf,
     '-q:v', '4',
@@ -231,15 +277,48 @@ function encodeJpeg(src, out, maxWidth, extraVf) {
   ])
 }
 
-function processGif(key, srcFile) {
-  const srcPath = path.join(SRC_DIR, srcFile)
+// ---------------------------------------------------------------------------
+// Idempotency cache: key -> { sourceHash, entry }. If the source file's
+// content hash is unchanged and every file the cached entry points at still
+// exists, we skip re-encoding entirely (no ffmpeg call, output bytes
+// untouched) — this is what makes a second run a no-op on disk.
+// ---------------------------------------------------------------------------
+let cache = {}
+if (existsSync(CACHE_PATH)) {
+  try {
+    cache = JSON.parse(readFileSync(CACHE_PATH, 'utf8'))
+  } catch {
+    cache = {}
+  }
+}
+
+function outputsExist(entry) {
+  for (const field of ['src', 'poster', 'jpg']) {
+    if (!entry[field]) continue
+    const rel = entry[field].replace(/^\/media\//, '')
+    if (!existsSync(path.join(OUT_DIR, rel))) return false
+  }
+  return true
+}
+
+function cacheHit(key, sourceHash) {
+  const c = cache[key]
+  if (!c || c.sourceHash !== sourceHash) return null
+  if (!outputsExist(c.entry)) return null
+  return c.entry
+}
+
+function processGif(key, sourceHash, srcPath) {
+  const hit = cacheHit(key, sourceHash)
+  if (hit) return { entry: hit, skipped: true }
+
   const mp4Path = path.join(OUT_DIR, `${key}.mp4`)
-  const webmPath = path.join(OUT_DIR, `${key}.webm`)
   const jpgPath = path.join(OUT_DIR, `${key}.jpg`)
 
   if (!FFMPEG_OK) {
-    copyFileSync(srcPath, path.join(OUT_DIR, `${key}${path.extname(srcFile)}`))
-    return { type: 'video', src: `/media/${key}${path.extname(srcFile)}`, width: 0, height: 0 }
+    const ext = path.extname(srcPath)
+    copyFileSync(srcPath, path.join(OUT_DIR, `${key}${ext}`))
+    return { entry: { type: 'video', src: `/media/${key}${ext}`, width: 0, height: 0 }, skipped: false }
   }
 
   let mp4Size = Infinity
@@ -250,37 +329,33 @@ function processGif(key, srcFile) {
     console.warn(`  ${key}.mp4 still ${(mp4Size / 1048576).toFixed(2)}MB at crf ${crf}, raising crf...`)
   }
 
-  let webmSize = Infinity
-  for (const crf of WEBM_CRF_LADDER) {
-    encodeWebm(srcPath, webmPath, VIDEO_SCALE_WIDTH, crf)
-    webmSize = fileSize(webmPath)
-    if (webmSize <= MAX_CLIP_BYTES) break
-    console.warn(`  ${key}.webm still ${(webmSize / 1048576).toFixed(2)}MB, raising crf...`)
-  }
-
   encodePoster(srcPath, jpgPath)
 
   const { width, height } = ffprobeDims(mp4Path)
 
   return {
-    type: 'video',
-    src: `/media/${key}.mp4`,
-    webm: `/media/${key}.webm`,
-    poster: `/media/${key}.jpg`,
-    width,
-    height,
-    _mp4Size: mp4Size,
-    _webmSize: webmSize,
+    entry: {
+      type: 'video',
+      src: `/media/${key}.mp4`,
+      poster: `/media/${key}.jpg`,
+      width,
+      height,
+    },
+    skipped: false,
+    mp4Size,
   }
 }
 
-function processImage(key, srcFile) {
-  const srcPath = path.join(SRC_DIR, srcFile)
+function processImage(key, sourceHash, srcPath) {
+  const hit = cacheHit(key, sourceHash)
+  if (hit) return { entry: hit, skipped: true }
+
   const webpPath = path.join(OUT_DIR, `${key}.webp`)
 
   if (!FFMPEG_OK) {
-    copyFileSync(srcPath, path.join(OUT_DIR, `${key}${path.extname(srcFile)}`))
-    return { type: 'image', src: `/media/${key}${path.extname(srcFile)}`, width: 0, height: 0 }
+    const ext = path.extname(srcPath)
+    copyFileSync(srcPath, path.join(OUT_DIR, `${key}${ext}`))
+    return { entry: { type: 'image', src: `/media/${key}${ext}`, width: 0, height: 0 }, skipped: false }
   }
 
   encodeWebp(srcPath, webpPath, 1600, 82)
@@ -292,35 +367,58 @@ function processImage(key, srcFile) {
     const jpgPath = path.join(OUT_DIR, `${key}.jpg`)
     // Crop toward a standard ~1.9:1 social-card ratio, centered, before
     // capping width — this is a derivative of the hero screenshot, not a
-    // second unique source (see task-2-brief.md).
+    // second unique source (see task-2-report.md).
     encodeJpeg(srcPath, jpgPath, 1200, 'crop=trunc(ih*1.9/2)*2:ih:(iw-trunc(ih*1.9/2)*2)/2:0')
     entry.jpg = `/media/${key}.jpg`
   }
 
-  return entry
+  return { entry, skipped: false }
 }
 
 function main() {
   const manifest = {}
+  const newCache = {}
   const clipSizes = []
+  let skippedCount = 0
+  let encodedCount = 0
 
-  const allKeys = { ...GIF_SOURCES, ...IMAGE_SOURCES }
-  const total = Object.keys(allKeys).length
+  const orderedImageKeys = Object.keys(IMAGE_SOURCES_HASH).filter((k) => !(k in IMAGE_ALIASES))
+  const total = Object.keys(GIF_SOURCES_HASH).length + orderedImageKeys.length
   let done = 0
 
-  for (const [key, srcFile] of Object.entries(GIF_SOURCES)) {
-    process.stdout.write(`[${++done}/${total}] ${key} (gif -> mp4/webm/jpg)\n`)
-    const entry = processGif(key, srcFile)
-    if (entry._mp4Size) clipSizes.push({ key, mp4: entry._mp4Size, webm: entry._webmSize })
-    delete entry._mp4Size
-    delete entry._webmSize
-    manifest[key] = entry
+  for (const [key, hash] of Object.entries(GIF_SOURCES_HASH)) {
+    done++
+    const srcPath = resolveSourceFile(hash)
+    const sourceHash = sha1(readFileSync(srcPath))
+    const result = processGif(key, sourceHash, srcPath)
+    process.stdout.write(`[${done}/${total}] ${key} (gif -> mp4/jpg)${result.skipped ? ' [cached, unchanged]' : ''}\n`)
+    if (result.skipped) skippedCount++
+    else encodedCount++
+    if (result.mp4Size) clipSizes.push({ key, mp4: result.mp4Size })
+    manifest[key] = result.entry
+    newCache[key] = { sourceHash, entry: result.entry }
   }
 
-  for (const [key, srcFile] of Object.entries(IMAGE_SOURCES)) {
-    process.stdout.write(`[${++done}/${total}] ${key} (image -> webp)\n`)
-    manifest[key] = processImage(key, srcFile)
+  for (const key of orderedImageKeys) {
+    done++
+    const hash = IMAGE_SOURCES_HASH[key]
+    const srcPath = resolveSourceFile(hash)
+    const sourceHash = sha1(readFileSync(srcPath))
+    const result = processImage(key, sourceHash, srcPath)
+    process.stdout.write(`[${done}/${total}] ${key} (image -> webp)${result.skipped ? ' [cached, unchanged]' : ''}\n`)
+    if (result.skipped) skippedCount++
+    else encodedCount++
+    manifest[key] = result.entry
+    newCache[key] = { sourceHash, entry: result.entry }
   }
+
+  // Aliases: same physical file as their canonical key, no separate encode.
+  for (const [aliasKey, canonicalKey] of Object.entries(IMAGE_ALIASES)) {
+    manifest[aliasKey] = { ...manifest[canonicalKey] }
+    newCache[aliasKey] = newCache[canonicalKey]
+  }
+
+  writeFileSync(CACHE_PATH, JSON.stringify(newCache, null, 2))
 
   const sortedKeys = Object.keys(manifest).sort()
   const sortedManifest = {}
@@ -360,12 +458,13 @@ function main() {
   console.log('')
   console.log(`Manifest entries: ${Object.keys(sortedManifest).length}`)
   console.log(`Content keys required: ${contentKeys.size}`)
+  console.log(`Encoded: ${encodedCount}, skipped (cached/unchanged): ${skippedCount}`)
 
   if (clipSizes.length) {
-    const over = clipSizes.filter((c) => c.mp4 > MAX_CLIP_BYTES || c.webm > MAX_CLIP_BYTES)
+    const over = clipSizes.filter((c) => c.mp4 > MAX_CLIP_BYTES)
     if (over.length) {
       console.warn(`WARNING: ${over.length} clip(s) still over 3MB after full crf ladder:`)
-      for (const c of over) console.warn(`  ${c.key}: mp4=${(c.mp4 / 1048576).toFixed(2)}MB webm=${(c.webm / 1048576).toFixed(2)}MB`)
+      for (const c of over) console.warn(`  ${c.key}: mp4=${(c.mp4 / 1048576).toFixed(2)}MB`)
     }
   }
 

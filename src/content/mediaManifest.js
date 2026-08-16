@@ -12,14 +12,6 @@ const mediaManifest = {
     "width": 1600,
     "height": 294
   },
-  "ai-attack-types": {
-    "type": "video",
-    "src": "/media/ai-attack-types.mp4",
-    "webm": "/media/ai-attack-types.webm",
-    "poster": "/media/ai-attack-types.jpg",
-    "width": 480,
-    "height": 196
-  },
   "ai-boss-data-asset": {
     "type": "image",
     "src": "/media/ai-boss-data-asset.webp",
@@ -29,112 +21,90 @@ const mediaManifest = {
   "ai-boss-phase-1": {
     "type": "video",
     "src": "/media/ai-boss-phase-1.mp4",
-    "webm": "/media/ai-boss-phase-1.webm",
     "poster": "/media/ai-boss-phase-1.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "ai-boss-phase-2": {
     "type": "video",
     "src": "/media/ai-boss-phase-2.mp4",
-    "webm": "/media/ai-boss-phase-2.webm",
     "poster": "/media/ai-boss-phase-2.jpg",
-    "width": 480,
-    "height": 270
+    "width": 720,
+    "height": 406
   },
   "ai-boss-phase-transition": {
     "type": "video",
     "src": "/media/ai-boss-phase-transition.mp4",
-    "webm": "/media/ai-boss-phase-transition.webm",
     "poster": "/media/ai-boss-phase-transition.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "ai-crowd-avoidance": {
     "type": "video",
     "src": "/media/ai-crowd-avoidance.mp4",
-    "webm": "/media/ai-crowd-avoidance.webm",
     "poster": "/media/ai-crowd-avoidance.jpg",
-    "width": 480,
-    "height": 196
+    "width": 720,
+    "height": 294
   },
   "ai-idle-to-engage": {
     "type": "video",
     "src": "/media/ai-idle-to-engage.mp4",
-    "webm": "/media/ai-idle-to-engage.webm",
     "poster": "/media/ai-idle-to-engage.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "ai-patrol-loop": {
     "type": "video",
     "src": "/media/ai-patrol-loop.mp4",
-    "webm": "/media/ai-patrol-loop.webm",
     "poster": "/media/ai-patrol-loop.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "ai-player-spotted": {
     "type": "video",
     "src": "/media/ai-player-spotted.mp4",
-    "webm": "/media/ai-player-spotted.webm",
     "poster": "/media/ai-player-spotted.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "ai-strafe-attack": {
     "type": "video",
     "src": "/media/ai-strafe-attack.mp4",
-    "webm": "/media/ai-strafe-attack.webm",
     "poster": "/media/ai-strafe-attack.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "ai-vision-perception": {
     "type": "video",
     "src": "/media/ai-vision-perception.mp4",
-    "webm": "/media/ai-vision-perception.webm",
     "poster": "/media/ai-vision-perception.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "audio-boss-soundtrack-manager": {
     "type": "image",
     "src": "/media/audio-boss-soundtrack-manager.webp",
-    "width": 1131,
-    "height": 62
-  },
-  "audio-combat-hit-feedback": {
-    "type": "image",
-    "src": "/media/audio-combat-hit-feedback.webp",
-    "width": 1600,
-    "height": 262
+    "width": 915,
+    "height": 192
   },
   "audio-dynamic-footstep": {
     "type": "image",
     "src": "/media/audio-dynamic-footstep.webp",
-    "width": 915,
-    "height": 192
-  },
-  "audio-gameplay-video-preview": {
-    "type": "image",
-    "src": "/media/audio-gameplay-video-preview.webp",
-    "width": 444,
-    "height": 250
+    "width": 1600,
+    "height": 262
   },
   "case-study-hero": {
     "type": "image",
-    "src": "/media/case-study-hero.webp",
+    "src": "/media/hero-background.webp",
     "width": 1600,
     "height": 632
   },
   "combat-camera-reset": {
     "type": "video",
     "src": "/media/combat-camera-reset.mp4",
-    "webm": "/media/combat-camera-reset.webm",
     "poster": "/media/combat-camera-reset.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-damage-calc-ge": {
     "type": "image",
@@ -145,58 +115,51 @@ const mediaManifest = {
   "combat-damage-hostile": {
     "type": "video",
     "src": "/media/combat-damage-hostile.mp4",
-    "webm": "/media/combat-damage-hostile.webm",
     "poster": "/media/combat-damage-hostile.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-damage-player": {
     "type": "video",
     "src": "/media/combat-damage-player.mp4",
-    "webm": "/media/combat-damage-player.webm",
     "poster": "/media/combat-damage-player.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-foot-ik": {
     "type": "video",
     "src": "/media/combat-foot-ik.mp4",
-    "webm": "/media/combat-foot-ik.webm",
     "poster": "/media/combat-foot-ik.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-hit-reaction-unarmed": {
     "type": "video",
     "src": "/media/combat-hit-reaction-unarmed.mp4",
-    "webm": "/media/combat-hit-reaction-unarmed.webm",
     "poster": "/media/combat-hit-reaction-unarmed.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-lock-on-death-switch": {
     "type": "video",
     "src": "/media/combat-lock-on-death-switch.mp4",
-    "webm": "/media/combat-lock-on-death-switch.webm",
     "poster": "/media/combat-lock-on-death-switch.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-lock-on-switch": {
     "type": "video",
     "src": "/media/combat-lock-on-switch.mp4",
-    "webm": "/media/combat-lock-on-switch.webm",
     "poster": "/media/combat-lock-on-switch.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-parry": {
     "type": "video",
     "src": "/media/combat-parry.mp4",
-    "webm": "/media/combat-parry.webm",
     "poster": "/media/combat-parry.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-players-stats": {
     "type": "image",
@@ -207,26 +170,23 @@ const mediaManifest = {
   "combat-state-heavy-weapon": {
     "type": "video",
     "src": "/media/combat-state-heavy-weapon.mp4",
-    "webm": "/media/combat-state-heavy-weapon.webm",
     "poster": "/media/combat-state-heavy-weapon.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-state-light-weapon": {
     "type": "video",
     "src": "/media/combat-state-light-weapon.mp4",
-    "webm": "/media/combat-state-light-weapon.webm",
     "poster": "/media/combat-state-light-weapon.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-state-unequipped": {
     "type": "video",
     "src": "/media/combat-state-unequipped.mp4",
-    "webm": "/media/combat-state-unequipped.webm",
     "poster": "/media/combat-state-unequipped.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "combat-weapon-data": {
     "type": "image",
@@ -249,66 +209,58 @@ const mediaManifest = {
   "interaction-inspect-note": {
     "type": "video",
     "src": "/media/interaction-inspect-note.mp4",
-    "webm": "/media/interaction-inspect-note.webm",
     "poster": "/media/interaction-inspect-note.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "interaction-open-chest": {
     "type": "video",
     "src": "/media/interaction-open-chest.mp4",
-    "webm": "/media/interaction-open-chest.webm",
     "poster": "/media/interaction-open-chest.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "interaction-open-door": {
     "type": "video",
     "src": "/media/interaction-open-door.mp4",
-    "webm": "/media/interaction-open-door.webm",
     "poster": "/media/interaction-open-door.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "interaction-open-locked-door": {
     "type": "video",
     "src": "/media/interaction-open-locked-door.mp4",
-    "webm": "/media/interaction-open-locked-door.webm",
     "poster": "/media/interaction-open-locked-door.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "interaction-pickup-heavy-weapon": {
     "type": "video",
     "src": "/media/interaction-pickup-heavy-weapon.mp4",
-    "webm": "/media/interaction-pickup-heavy-weapon.webm",
     "poster": "/media/interaction-pickup-heavy-weapon.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "interaction-pickup-item": {
     "type": "video",
     "src": "/media/interaction-pickup-item.mp4",
-    "webm": "/media/interaction-pickup-item.webm",
     "poster": "/media/interaction-pickup-item.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "inventory-action-context-menu": {
     "type": "video",
     "src": "/media/inventory-action-context-menu.mp4",
-    "webm": "/media/inventory-action-context-menu.webm",
     "poster": "/media/inventory-action-context-menu.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "inventory-category-showcase": {
     "type": "video",
     "src": "/media/inventory-category-showcase.mp4",
-    "webm": "/media/inventory-category-showcase.webm",
     "poster": "/media/inventory-category-showcase.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "inventory-data-table-detail": {
     "type": "image",
@@ -325,18 +277,16 @@ const mediaManifest = {
   "inventory-key-item-usage": {
     "type": "video",
     "src": "/media/inventory-key-item-usage.mp4",
-    "webm": "/media/inventory-key-item-usage.webm",
     "poster": "/media/inventory-key-item-usage.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "inventory-stack-overflow": {
     "type": "video",
     "src": "/media/inventory-stack-overflow.mp4",
-    "webm": "/media/inventory-stack-overflow.webm",
     "poster": "/media/inventory-stack-overflow.jpg",
-    "width": 480,
-    "height": 194
+    "width": 720,
+    "height": 290
   },
   "level-design-dungeon-environment-1": {
     "type": "image",
@@ -437,7 +387,7 @@ const mediaManifest = {
   },
   "project-cover": {
     "type": "image",
-    "src": "/media/project-cover.webp",
+    "src": "/media/hero-background.webp",
     "width": 1600,
     "height": 632
   }
