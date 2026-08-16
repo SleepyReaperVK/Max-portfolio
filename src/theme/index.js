@@ -19,6 +19,9 @@ theme = createTheme(theme, {
     reveal,
     section: { paddingBlock: { xs: theme.spacing(8), md: theme.spacing(14) } },
     maxTextWidth: '68ch',
+    // Fixed navbar height (also the "solid after Npx" scroll-trigger threshold).
+    // Single source of truth for NavBar, Section, SectionHeading, PageLayout.
+    navbarHeight: theme.spacing(8),
   },
 })
 

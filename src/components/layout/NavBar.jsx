@@ -16,18 +16,20 @@ import CloseIcon from '@mui/icons-material/Close'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 import { useTheme, alpha } from '@mui/material/styles'
 
-// Number of theme spacing units used for the navbar's fixed height. Shared
-// with Section/SectionHeading/PageLayout so anchor scroll offsets and the
-// "solid after N px" scroll trigger stay derived from the same theme token.
-export const NAVBAR_SPACING_UNITS = 8
+const navLinkSx = (theme) => ({
+  color: 'text.primary',
+  textDecoration: 'none',
+  fontWeight: 600,
+  '&:focus-visible': { outline: `2px solid ${theme.palette.primary.main}`, outlineOffset: 2 },
+})
 
 export default function NavBar({ navLinks = [], siteConfig }) {
   const theme = useTheme()
   const location = useLocation()
   const [open, setOpen] = useState(false)
   const isHome = location.pathname === '/'
-  const navbarHeight = theme.spacing(NAVBAR_SPACING_UNITS)
-  const scrollThreshold = parseFloat(theme.spacing(NAVBAR_SPACING_UNITS))
+  const navbarHeight = theme.custom.navbarHeight
+  const scrollThreshold = parseFloat(navbarHeight)
 
   const trigger = useScrollTrigger({ disableHysteresis: true, threshold: scrollThreshold })
 
@@ -35,33 +37,11 @@ export default function NavBar({ navLinks = [], siteConfig }) {
 
   const renderLink = (link, onNavigate) =>
     isHome ? (
-      <Box
-        key={link.id}
-        component="a"
-        href={`#${link.id}`}
-        onClick={onNavigate}
-        sx={{
-          color: 'text.primary',
-          textDecoration: 'none',
-          fontWeight: 600,
-          '&:focus-visible': { outline: `2px solid ${theme.palette.primary.main}`, outlineOffset: 2 },
-        }}
-      >
+      <Box key={link.id} component="a" href={`#${link.id}`} onClick={onNavigate} sx={navLinkSx(theme)}>
         {link.label}
       </Box>
     ) : (
-      <Box
-        key={link.id}
-        component={RouterLink}
-        to={link.href}
-        onClick={onNavigate}
-        sx={{
-          color: 'text.primary',
-          textDecoration: 'none',
-          fontWeight: 600,
-          '&:focus-visible': { outline: `2px solid ${theme.palette.primary.main}`, outlineOffset: 2 },
-        }}
-      >
+      <Box key={link.id} component={RouterLink} to={link.href} onClick={onNavigate} sx={navLinkSx(theme)}>
         {link.label}
       </Box>
     )
@@ -95,7 +75,11 @@ export default function NavBar({ navLinks = [], siteConfig }) {
           {siteConfig?.name}
         </Typography>
 
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 4 }}>
+        <Box
+          component="nav"
+          aria-label="Main"
+          sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 4 }}
+        >
           {navLinks.map((link) => renderLink(link))}
           <Button
             variant="contained"
@@ -117,14 +101,14 @@ export default function NavBar({ navLinks = [], siteConfig }) {
         </IconButton>
       </Toolbar>
 
-      <Drawer anchor="right" open={open} onClose={closeDrawer}>
+      <Drawer anchor="right" open={open} onClose={closeDrawer} ModalProps={{ keepMounted: true }}>
         <Box sx={{ width: theme.spacing(32), height: '100%', bgcolor: 'background.paper', p: 2 }} role="presentation">
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             <IconButton aria-label="Close navigation menu" onClick={closeDrawer} sx={{ color: 'text.primary' }}>
               <CloseIcon />
             </IconButton>
           </Box>
-          <List>
+          <List component="nav" aria-label="Mobile">
             {navLinks.map((link) => (
               <ListItem key={link.id} disablePadding>
                 {isHome ? (

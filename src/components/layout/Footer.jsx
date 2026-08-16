@@ -5,10 +5,7 @@ import IconButton from '@mui/material/IconButton'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import EmailIcon from '@mui/icons-material/Email'
-import { useTheme } from '@mui/material/styles'
-
 export default function Footer({ siteConfig }) {
-  const theme = useTheme()
   const year = new Date().getFullYear()
 
   return (
@@ -64,7 +61,7 @@ export default function Footer({ siteConfig }) {
           ) : null}
         </Box>
 
-        <Typography variant="caption" color="text.secondary" sx={{ fontFamily: theme.typography.fontFamily }}>
+        <Typography variant="caption" color="text.secondary">
           Built with React &amp; MUI
         </Typography>
       </Container>

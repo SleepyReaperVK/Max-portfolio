@@ -1,11 +1,10 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
-import { NAVBAR_SPACING_UNITS } from '@/components/layout/NavBar'
 
 export default function SectionHeading({ eyebrow, title, align = 'left' }) {
   const theme = useTheme()
-  const navbarHeight = theme.spacing(NAVBAR_SPACING_UNITS)
+  const navbarHeight = theme.custom.navbarHeight
   const itemsAlign = align === 'center' ? 'center' : 'flex-start'
 
   return (
@@ -29,14 +28,16 @@ export default function SectionHeading({ eyebrow, title, align = 'left' }) {
           {title}
         </Typography>
       ) : null}
-      <Box
-        sx={{
-          width: theme.spacing(6),
-          height: theme.spacing(0.25),
-          bgcolor: 'primary.main',
-          mt: 2,
-        }}
-      />
+      {eyebrow || title ? (
+        <Box
+          sx={{
+            width: theme.spacing(6),
+            height: theme.spacing(0.25),
+            bgcolor: 'primary.main',
+            mt: 2,
+          }}
+        />
+      ) : null}
     </Box>
   )
 }

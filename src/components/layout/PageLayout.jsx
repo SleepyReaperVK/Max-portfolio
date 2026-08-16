@@ -2,17 +2,24 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import { useTheme } from '@mui/material/styles'
-import NavBar, { NAVBAR_SPACING_UNITS } from './NavBar'
+import NavBar from './NavBar'
 import Footer from './Footer'
 
 export default function PageLayout({ navLinks, siteConfig, children }) {
   const theme = useTheme()
-  const { pathname } = useLocation()
-  const navbarHeight = theme.spacing(NAVBAR_SPACING_UNITS)
+  const { pathname, hash } = useLocation()
+  const navbarHeight = theme.custom.navbarHeight
 
   useEffect(() => {
+    if (hash) {
+      const el = document.querySelector(hash)
+      if (el) {
+        el.scrollIntoView()
+        return
+      }
+    }
     window.scrollTo(0, 0)
-  }, [pathname])
+  }, [pathname, hash])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

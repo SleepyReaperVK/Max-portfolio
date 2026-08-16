@@ -7,7 +7,7 @@ import mediaManifest from '@/content/mediaManifest'
 
 const warnedKeys = new Set()
 
-export default function MediaFrame({ mediaKey, alt, caption, ratio, priority = false, onClick }) {
+export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priority = false, onClick }) {
   const theme = useTheme()
   const reduce = useReducedMotion()
   const videoRef = useRef(null)
@@ -21,6 +21,14 @@ export default function MediaFrame({ mediaKey, alt, caption, ratio, priority = f
       console.warn(`MediaFrame: unknown media key "${mediaKey}"`)
     }
   }, [entry, mediaKey])
+
+  useEffect(() => {
+    if (entry && entry.type === 'image' && !alt && !warnedKeys.has(`${mediaKey}:alt`)) {
+      warnedKeys.add(`${mediaKey}:alt`)
+      // eslint-disable-next-line no-console
+      console.warn(`MediaFrame: missing "alt" for image media key "${mediaKey}"`)
+    }
+  }, [entry, mediaKey, alt])
 
   useEffect(() => {
     if (!entry || entry.type !== 'video') return undefined
@@ -49,6 +57,7 @@ export default function MediaFrame({ mediaKey, alt, caption, ratio, priority = f
     ? {
         role: 'button',
         tabIndex: 0,
+        'aria-label': alt || undefined,
         onClick,
         onKeyDown: (event) => {
           if (event.key === 'Enter' || event.key === ' ') {
@@ -105,7 +114,7 @@ export default function MediaFrame({ mediaKey, alt, caption, ratio, priority = f
             height={entry.height}
             loading={priority ? 'eager' : 'lazy'}
             decoding="async"
-            sx={{ width: '100%', height: 'auto', borderRadius: 1, display: 'block' }}
+            sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
         ) : (
           <Box
