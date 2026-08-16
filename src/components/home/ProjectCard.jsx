@@ -40,12 +40,18 @@ export default function ProjectCard({ project, featured = false }) {
           flexDirection: featured ? { xs: 'column', md: 'row' } : 'column',
           alignItems: 'stretch',
           justifyContent: 'flex-start',
+          '&.Mui-focusVisible': {
+            outline: `2px solid ${theme.palette.primary.main}`,
+            outlineOffset: 2,
+          },
         }}
       >
         <Box
           sx={{
             width: featured ? { xs: '100%', md: '60%' } : '100%',
             flexShrink: 0,
+            display: 'flex',
+            '& > div, & > div > div': { height: '100%' },
           }}
         >
           <MediaFrame mediaKey={project.cover} alt={`${project.title} cover art`} />
@@ -69,7 +75,7 @@ export default function ProjectCard({ project, featured = false }) {
             {project.summary}
           </Typography>
           <Stack direction="row" gap={1} sx={{ flexWrap: 'wrap' }}>
-            {project.tags.map((tag) => (
+            {(project.tags ?? []).map((tag) => (
               <Chip key={tag} label={tag} variant="outlined" size="small" />
             ))}
           </Stack>
