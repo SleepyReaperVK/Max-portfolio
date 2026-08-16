@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import HomeWorkIcon from '@mui/icons-material/HomeWork'
 import PublicIcon from '@mui/icons-material/Public'
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff'
-import { useTheme } from '@mui/material/styles'
+import { useTheme, alpha } from '@mui/material/styles'
 import Section from '@/components/common/Section'
 import AnimatedReveal from '@/components/common/AnimatedReveal'
 
@@ -25,9 +25,9 @@ export default function AvailabilitySection({ modes, location, note }) {
       eyebrow="Availability"
       title="Open to hybrid, remote, and relocation"
       sx={{
-        width: '100vw',
-        marginLeft: 'calc(50% - 50vw)',
-        bgcolor: 'background.paper',
+        backgroundColor: 'background.paper',
+        backgroundImage: (t) =>
+          `linear-gradient(${alpha(t.palette.primary.main, 0.04)}, ${alpha(t.palette.primary.main, 0.04)})`,
         borderTop: '2px solid',
         borderBottom: '2px solid',
         borderColor: 'primary.main',
