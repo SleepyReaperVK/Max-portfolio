@@ -1,0 +1,159 @@
+- generic [ref=f2e1]:
+  - generic [ref=f2e4]:
+    - generic [ref=f2e6]:
+      - link "Skip to content" [ref=f2e8] [cursor=pointer]:
+        - /url: "#main"
+      - generic [ref=f2e12]:
+        - banner [ref=f2e13]:
+          - generic [ref=f2e15]:
+            - generic [ref=f2e16]:
+              - link "Pray For Plagues, Souls-borne Prototype" [ref=f2e18] [cursor=pointer]:
+                - /url: /Pray-For-Plagues-Souls-borne-Prototype-ff37216d8bc582719a9981258a2d28c6?pvs=18
+              - generic [ref=f2e22]: /
+              - link "Systems Documentation" [ref=f2e24] [cursor=pointer]:
+                - /url: /1827216d8bc5820fa6b101c9d8b933ce?v=4217216d8bc583a9b62b8826d6a9a0c3&pvs=18
+              - generic [ref=f2e30]: /
+              - button "Project Overview" [disabled] [ref=f2e31]
+            - generic [ref=f2e33]:
+              - button "Close panel" [ref=f2e35] [cursor=pointer]
+              - generic [ref=f2e39]:
+                - button [ref=f2e40] [cursor=pointer]
+                - button "Share site to socials" [ref=f2e45] [cursor=pointer]
+                - button [ref=f2e50] [cursor=pointer]
+                - button "More actions" [ref=f2e54] [cursor=pointer]
+                - button "Get Notion free" [ref=f2e57] [cursor=pointer]
+        - main [ref=f2e58]:
+          - group [disabled] [ref=f2e61]:
+            - generic [ref=f2e63]:
+              - heading "Project Overview" [level=1] [ref=f2e98]
+              - generic [ref=f2e104]:
+                - table "Page properties" [ref=f2e105]:
+                  - row [disabled] [ref=f2e107]:
+                    - cell "GitHub" [ref=f2e112]
+                    - cell [ref=f2e122]:
+                      - link "github.com/Max…e/main" [disabled] [ref=f2e127] [cursor=pointer]:
+                        - /url: https://github.com/Maxer1189/Souls-like_GameProject/tree/main
+                - button "3 more properties" [disabled] [ref=f2e130] [cursor=pointer]
+              - generic [ref=f2e134]:
+                - heading "Project Summary" [level=2] [ref=f2e139]
+                - generic [ref=f2e140]: Pray For Plagues — Action RPG Souls-Borne Prototype
+                - generic [ref=f2e146]: This project is a Souls‑borne inspired action RPG built around deliberate combat, punishing enemy encounters, and systemic gameplay interactions. The goal is to recreate the core pillars of the genre weighty animations, precise timing windows, readable telegraphs, and intelligent enemy behavior, while building the underlying systems in a clean, extensible engineering architecture.
+                - generic [ref=f2e152]: The game is developed in Unreal Engine 5, using a combination of C++, Blueprints and Blender, where its foundation is heavily built around GAS and its attribute system.
+                - heading "My Role & Contributions" [level=2] [ref=f2e162]
+                - generic [ref=f2e164]:
+                  - generic [ref=f2e166]:
+                    - heading "1. Gameplay Engineering" [level=4] [ref=f2e171]
+                    - generic [ref=f2e175]:
+                      - generic [ref=f2e176]: •
+                      - generic [ref=f2e178]: Interaction System
+                    - generic [ref=f2e184]:
+                      - generic [ref=f2e185]: •
+                      - generic [ref=f2e187]: Inventory System
+                    - generic [ref=f2e193]:
+                      - generic [ref=f2e194]: •
+                      - generic [ref=f2e196]: Dynamic Footstep System
+                    - generic [ref=f2e202]:
+                      - generic [ref=f2e203]: •
+                      - generic [ref=f2e205]: Object Destruction System
+                    - heading "2. AI Engineering" [level=4] [ref=f2e212]
+                    - generic [ref=f2e216]:
+                      - generic [ref=f2e217]: •
+                      - generic [ref=f2e219]: AI Attack Manager
+                    - generic [ref=f2e225]:
+                      - generic [ref=f2e226]: •
+                      - generic [ref=f2e228]: Telegraphing System
+                    - generic [ref=f2e234]:
+                      - generic [ref=f2e235]: •
+                      - generic [ref=f2e237]: AOE & Regular Damage
+                    - generic [ref=f2e243]:
+                      - generic [ref=f2e244]: •
+                      - generic [ref=f2e246]: Boss Behavior Logic
+                    - generic [ref=f2e252]:
+                      - generic [ref=f2e253]: •
+                      - generic [ref=f2e255]: AI Hit Reactions
+                    - generic [ref=f2e261]:
+                      - generic [ref=f2e262]: •
+                      - generic [ref=f2e264]: Close Range & Long Range Enemies
+                    - generic [ref=f2e270]:
+                      - generic [ref=f2e271]: •
+                      - generic [ref=f2e273]: Built On EQS & BT
+                    - heading "3. Level Design" [level=4] [ref=f2e280]
+                    - generic [ref=f2e284]:
+                      - generic [ref=f2e285]: •
+                      - generic [ref=f2e287]: Three-Level Dungeon
+                    - generic [ref=f2e293]:
+                      - generic [ref=f2e294]: •
+                      - generic [ref=f2e296]: Encounter Design
+                    - generic [ref=f2e302]:
+                      - generic [ref=f2e303]: •
+                      - generic [ref=f2e305]: Environmental Interaction Integration
+                  - generic [ref=f2e310]:
+                    - heading "4. Combat System Engineering" [level=4] [ref=f2e315]
+                    - generic [ref=f2e319]:
+                      - generic [ref=f2e320]: •
+                      - generic [ref=f2e322]: Weapon Framework
+                    - generic [ref=f2e328]:
+                      - generic [ref=f2e329]: •
+                      - generic [ref=f2e331]: Attack Chains & Special Attacks
+                    - generic [ref=f2e337]:
+                      - generic [ref=f2e338]: •
+                      - generic [ref=f2e340]: Damage Multipliers
+                    - generic [ref=f2e346]:
+                      - generic [ref=f2e347]: •
+                      - generic [ref=f2e349]: Parry System
+                    - generic [ref=f2e355]:
+                      - generic [ref=f2e356]: •
+                      - generic [ref=f2e358]: Hit Reaction System
+                    - generic [ref=f2e364]:
+                      - generic [ref=f2e365]: •
+                      - generic [ref=f2e367]: Dodge System
+                    - generic [ref=f2e373]:
+                      - generic [ref=f2e374]: •
+                      - generic [ref=f2e376]: Projectile Spawn
+                    - heading "5. Audio & Feedback Systems" [level=4] [ref=f2e383]
+                    - generic [ref=f2e387]:
+                      - generic [ref=f2e388]: •
+                      - generic [ref=f2e390]: Dynamic Boss Soundtrack Manager
+                    - heading "6. UI & Player Feedback Systems" [level=4] [ref=f2e403]
+                    - generic [ref=f2e407]:
+                      - generic [ref=f2e408]: •
+                      - generic [ref=f2e410]: Player Overlay UI
+                    - generic [ref=f2e416]:
+                      - generic [ref=f2e417]: •
+                      - generic [ref=f2e419]: Standard enemy health bar system
+                    - generic [ref=f2e425]:
+                      - generic [ref=f2e426]: •
+                      - generic [ref=f2e428]: Visibility rules
+                    - generic [ref=f2e434]:
+                      - generic [ref=f2e435]: •
+                      - generic [ref=f2e437]: Unique boss UI with title display
+                - heading "Tech Stack" [level=2] [ref=f2e444]
+                - generic [ref=f2e446]:
+                  - generic [ref=f2e448]:
+                    - generic [ref=f2e452]:
+                      - generic [ref=f2e453]: •
+                      - generic [ref=f2e455]: Unreal Engine 5
+                    - generic [ref=f2e461]:
+                      - generic [ref=f2e462]: •
+                      - generic [ref=f2e464]: C ++
+                    - generic [ref=f2e470]:
+                      - generic [ref=f2e471]: •
+                      - generic [ref=f2e473]: Blueprints
+                    - generic [ref=f2e479]:
+                      - generic [ref=f2e480]: •
+                      - generic [ref=f2e482]: Data‑driven item, weapon, and interaction systems
+                  - generic [ref=f2e487]:
+                    - generic [ref=f2e491]:
+                      - generic [ref=f2e492]: •
+                      - generic [ref=f2e494]: Diversion
+                    - generic [ref=f2e500]:
+                      - generic [ref=f2e501]: •
+                      - generic [ref=f2e503]: Animation State Machines & Blend-Spaces
+                    - generic [ref=f2e509]:
+                      - generic [ref=f2e510]: •
+                      - generic [ref=f2e512]: Behavior Trees & Custom AI Attack Manager
+        - region [ref=f2e517]
+    - status [ref=f2e518]
+    - alert [ref=f2e519]
+  - iframe [ref=f2e520]:
+    

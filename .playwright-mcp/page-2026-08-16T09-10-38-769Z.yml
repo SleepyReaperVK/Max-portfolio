@@ -1,0 +1,46 @@
+- generic [ref=f12e1]:
+  - generic [ref=f12e4]:
+    - generic [ref=f12e6]:
+      - link "Skip to content" [ref=f12e8] [cursor=pointer]:
+        - /url: "#main"
+      - generic [ref=f12e12]:
+        - banner [ref=f12e13]:
+          - generic [ref=f12e15]:
+            - generic [ref=f12e16]:
+              - link "Pray For Plagues, Souls-borne Prototype" [ref=f12e18] [cursor=pointer]:
+                - /url: /Pray-For-Plagues-Souls-borne-Prototype-ff37216d8bc582719a9981258a2d28c6?pvs=18
+              - generic [ref=f12e22]: /
+              - link "Systems Documentation" [ref=f12e24] [cursor=pointer]:
+                - /url: /1827216d8bc5820fa6b101c9d8b933ce?v=4217216d8bc583a9b62b8826d6a9a0c3&pvs=18
+              - generic [ref=f12e30]: /
+              - button "AI System Breakdown" [disabled] [ref=f12e31]
+            - generic [ref=f12e33]:
+              - button "Close panel" [ref=f12e35] [cursor=pointer]
+              - generic [ref=f12e39]:
+                - button [ref=f12e40] [cursor=pointer]
+                - button "Share site to socials" [ref=f12e45] [cursor=pointer]
+                - button [ref=f12e50] [cursor=pointer]
+                - button "More actions" [ref=f12e54] [cursor=pointer]
+                - button "Get Notion free" [ref=f12e57] [cursor=pointer]
+        - main [ref=f12e58]:
+          - group [disabled] [ref=f12e61]:
+            - generic [ref=f12e63]:
+              - heading "AI System Breakdown" [level=1] [ref=f12e86]
+              - generic [ref=f12e92]:
+                - table "Page properties"
+                - button "4 more properties" [disabled] [ref=f12e95] [cursor=pointer]
+              - generic [ref=f12e99]:
+                - generic [ref=f12e104]:
+                  - button "Open" [disabled] [ref=f12e106] [cursor=pointer]
+                  - heading "Overview" [level=3] [ref=f12e111]
+                - generic [ref=f12e116]:
+                  - button "Open" [disabled] [ref=f12e118] [cursor=pointer]
+                  - heading "Design Goals" [level=3] [ref=f12e123]
+                - generic [ref=f12e128]:
+                  - button "Open" [disabled] [ref=f12e130] [cursor=pointer]
+                  - heading "System Architecture" [level=3] [ref=f12e135]
+        - region [ref=f12e138]
+    - status [ref=f12e139]
+    - alert [ref=f12e140]
+  - iframe [ref=f12e141]:
+    
