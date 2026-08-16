@@ -12,8 +12,8 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (/react-router-dom|\breact\b|react-dom/.test(id)) return 'vendor'
-            if (/@mui\/material|@emotion\/react|@emotion\/styled/.test(id)) return 'mui'
+            if (/node_modules[\\/](@mui[\\/]|@emotion[\\/])/.test(id)) return 'mui'
+            if (/node_modules[\\/](react|react-dom|react-router-dom)[\\/]/.test(id)) return 'vendor'
           }
         },
       },
