@@ -17,10 +17,17 @@ export default function Lightbox({ items = [], index = 0, open, onClose, onNavig
 
   const goTo = (nextIndex) => {
     if (!total) return
+    // Deliberately wraps (Left on the first item jumps to the last, and vice
+    // versa) — the brief doesn't specify end behavior; wrapping keeps
+    // Home/End meaningful bounds while arrow-key browsing never dead-ends.
     onNavigate((nextIndex + total) % total)
   }
 
   const handleKeyDown = (event) => {
+    // Let a focused <video controls> handle its own Left/Right seeking —
+    // only hijack arrow keys when the video itself isn't the event target.
+    if (event.target.tagName === 'VIDEO') return
+
     if (event.key === 'ArrowLeft') {
       event.preventDefault()
       goTo(index - 1)
@@ -36,7 +43,12 @@ export default function Lightbox({ items = [], index = 0, open, onClose, onNavig
     }
   }
 
-  if (!open || !item) return null
+  // Only the missing `item` (no items ever opened) blocks render — `open`
+  // itself must stay reactive so MUI's closeAfterTransition Fade can play
+  // out on close instead of the Dialog hard-unmounting mid-transition.
+  if (!item) return null
+
+  const captionId = 'lightbox-caption'
 
   return (
     <Dialog
@@ -46,6 +58,8 @@ export default function Lightbox({ items = [], index = 0, open, onClose, onNavig
       maxWidth="lg"
       fullWidth
       onKeyDown={handleKeyDown}
+      aria-labelledby={item.caption ? captionId : undefined}
+      aria-label={item.caption ? undefined : 'Media viewer'}
       slotProps={{
         backdrop: { sx: { bgcolor: alpha(theme.palette.common.black, 0.92) } },
       }}
@@ -96,7 +110,7 @@ export default function Lightbox({ items = [], index = 0, open, onClose, onNavig
             )}
 
             {item.caption ? (
-              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 2 }}>
+              <Typography id={captionId} variant="body2" sx={{ color: 'text.secondary', mt: 2 }}>
                 {item.caption}
               </Typography>
             ) : null}

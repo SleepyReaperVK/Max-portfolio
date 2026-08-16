@@ -30,6 +30,16 @@ export default function CaseStudyHero({ title, tagline, heroKey, heroAlt, github
           position: 'absolute',
           inset: 0,
           zIndex: 0,
+          // COUPLING: forces MediaFrame's aspect-ratio box to fill this
+          // absolutely-positioned wrapper instead of reserving its own
+          // ratio, by targeting MediaFrame's exact current DOM shape
+          // (root <div> > media <div>) — same technique ProjectCard.jsx
+          // already relies on. MediaFrame is Task 3's file and off-limits
+          // to modify here; if a future MediaFrame refactor changes that
+          // nesting, this full-bleed hero silently collapses back to a
+          // fixed-aspect-ratio box. Flagged for the polish pass rather than
+          // fixed now, since fixing it properly means adding an `sx`/`fill`
+          // override prop to MediaFrame itself.
           '& > div, & > div > div': { height: '100%', width: '100%' },
         }}
       >

@@ -84,10 +84,13 @@ export default function PrayForPlagues() {
         </Grid>
       </Section>
 
-      <Box component="section" id="systems" sx={{ py: theme.custom.section.paddingBlock }}>
+      <Box component="section" id="systems" aria-label="System breakdowns" sx={{ py: theme.custom.section.paddingBlock }}>
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 4, lg: 6 }}>
-            <Grid size={{ xs: 12, lg: 3 }}>
+            {/* Hide the grid cell itself (not just SystemNav's inner content) below
+                `lg` — hiding only the child would still leave an empty cell
+                contributing a `spacing` gap above the first system. */}
+            <Grid size={{ xs: 12, lg: 3 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
               <SystemNav systems={prayForPlagues.systems} />
             </Grid>
             <Grid size={{ xs: 12, lg: 9 }} sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>

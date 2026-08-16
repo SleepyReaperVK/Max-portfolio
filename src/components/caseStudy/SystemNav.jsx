@@ -15,14 +15,26 @@ export default function SystemNav({ systems = [], activeId: activeIdProp }) {
     const elements = systems.map((system) => document.getElementById(system.id)).filter(Boolean)
     if (!elements.length) return undefined
 
+    // The observer callback only ever receives entries whose intersection
+    // state just changed — not the full observed set. So we keep our own
+    // running map of "is this element currently inside the band" per
+    // element, updated incrementally from each callback, and recompute the
+    // topmost currently-visible element from that map every time — instead
+    // of trying to pick a winner out of the (possibly single-element,
+    // possibly stale) `entries` array alone.
+    const isIntersecting = new Map(elements.map((element) => [element, false]))
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.filter((entry) => entry.isIntersecting)
+        entries.forEach((entry) => isIntersecting.set(entry.target, entry.isIntersecting))
+
+        const visible = elements.filter((element) => isIntersecting.get(element))
         if (visible.length === 0) return
-        const topMost = visible.reduce((closest, entry) =>
-          entry.boundingClientRect.top < closest.boundingClientRect.top ? entry : closest,
+
+        const topMost = visible.reduce((closest, element) =>
+          element.getBoundingClientRect().top <= closest.getBoundingClientRect().top ? element : closest,
         )
-        setTrackedActiveId(topMost.target.id)
+        setTrackedActiveId(topMost.id)
       },
       { rootMargin: '-30% 0px -60% 0px', threshold: 0 },
     )
@@ -36,7 +48,6 @@ export default function SystemNav({ systems = [], activeId: activeIdProp }) {
       component="nav"
       aria-label="System sections"
       sx={{
-        display: { xs: 'none', lg: 'block' },
         position: 'sticky',
         top: `calc(${theme.custom.navbarHeight} + ${theme.spacing(3)})`,
       }}

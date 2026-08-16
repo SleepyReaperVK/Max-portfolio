@@ -1,6 +1,10 @@
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 
+// ASSUMPTION: divider placement below is hand-derived for exactly 6 stats at
+// 2 cols (xs) / 3 cols (sm) / 6 cols (md+) — correct only at that count.
+// `prayForPlagues.stats` is fixed content (6 entries); if that ever changes,
+// this index-based border math needs to be redone for the new column counts.
 export default function AtAGlance({ stats = [] }) {
   return (
     <Grid
