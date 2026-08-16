@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# PLACEHOLDER DOMAIN: fill in once the real domain is registered.
+# Sitemap: https://maxmasarski.dev/sitemap.xml

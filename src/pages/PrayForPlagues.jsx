@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import { useTheme } from '@mui/material/styles'
 import Section from '@/components/common/Section'
+import Seo from '@/components/common/Seo'
 import AnimatedReveal from '@/components/common/AnimatedReveal'
 import CaseStudyHero from '@/components/caseStudy/CaseStudyHero'
 import AtAGlance from '@/components/caseStudy/AtAGlance'
@@ -20,6 +21,7 @@ import mediaManifest from '@/content/mediaManifest'
 // `prayForPlagues.hero.src` stores a siteConfig.media lookup key ("caseStudyHero"),
 // not a raw mediaManifest key — resolve it here so components stay content-free.
 const heroKey = siteConfig.media[prayForPlagues.hero.src] || prayForPlagues.hero.src
+const heroMedia = mediaManifest[heroKey]
 
 export default function PrayForPlagues() {
   const theme = useTheme()
@@ -35,6 +37,12 @@ export default function PrayForPlagues() {
 
   return (
     <Box>
+      <Seo
+        title={`${prayForPlagues.title} — Souls-borne Combat Prototype in Unreal Engine 5 | ${siteConfig.name}`}
+        description="Pray For Plagues — Souls-borne combat prototype in Unreal Engine 5, covering combat, AI, inventory, interaction, audio, and level design systems built solo in C++ and Blueprints."
+        image={heroMedia?.src}
+        path="/projects/pray-for-plagues"
+      />
       <CaseStudyHero
         title={prayForPlagues.title}
         tagline={prayForPlagues.tagline}

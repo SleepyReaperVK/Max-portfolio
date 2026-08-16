@@ -4,9 +4,14 @@
 
 **Goal:** Build a production-ready React + MUI portfolio site for Max Masarski (gameplay programmer, UE5) with a deep case study of the Pray For Plagues prototype, deployable as static files to a Hetzner box.
 
-**Architecture:** Vite + React 18 SPA with two routes — a single-scroll home page and a lazy-loaded case-study page. All visual decisions live in a central MUI theme; every component is presentational and receives content as props, so eleven independently-built slices still render as one coherent site. All copy comes from pre-scraped Notion JSON in `content-raw/`; all media is downloaded and optimized into `public/media/` because the source URLs expire.
+**Architecture:** Vite + React 19 SPA with two routes — a single-scroll home page and a lazy-loaded case-study page. All visual decisions live in a central MUI theme; every component is presentational and receives content as props, so eleven independently-built slices still render as one coherent site. All copy comes from pre-scraped Notion JSON in `content-raw/`; all media is downloaded and optimized into `public/media/` because the source URLs expire.
 
-**Tech Stack:** Vite 5, React 18, MUI v5, Emotion, framer-motion, react-router-dom v6, ffmpeg (media optimization), Node 20+ (verified locally: Node 26.7.0, npm 11.17.0, ffmpeg 8.1.2).
+**Tech Stack:** Vite 8.2, React 19.2, MUI v9.3, Emotion 11, framer-motion 13, react-router-dom 7.18, ffmpeg (media optimization), Node 26.7.0, npm 11.17.0, ffmpeg 8.1.2 (all verified against `node_modules/` on 2026-08-16).
+
+> **Version correction:** this plan originally specified Vite 5 / React 18 /
+> MUI v5 / react-router v6. The scaffold was built on current stable instead.
+> Read spec §2.1 before writing MUI code — two v5-era patterns fail silently
+> under v9 (`Typography color="primary.main"` and bare `:focus-visible` rules).
 
 **Spec:** `docs/superpowers/specs/2026-08-16-portfolio-design.md`
 

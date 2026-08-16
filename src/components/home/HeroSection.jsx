@@ -127,7 +127,7 @@ export default function HeroSection({
             zIndex: 2,
             color: 'text.secondary',
             display: 'flex',
-            animation: `hero-scroll-cue ${theme.custom.motion.slow * 2}ms ${theme.custom.motion.easing} infinite`,
+            animation: `hero-scroll-cue ${theme.custom.motion.slow}ms ${theme.custom.motion.easing} infinite`,
             '@keyframes hero-scroll-cue': {
               '0%, 100%': { transform: 'translate(-50%, 0)' },
               '50%': { transform: `translate(-50%, ${theme.spacing(1)})` },

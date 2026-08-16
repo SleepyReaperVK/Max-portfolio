@@ -13,7 +13,7 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (/node_modules[\\/](@mui[\\/]|@emotion[\\/])/.test(id)) return 'mui'
-            if (/node_modules[\\/](react|react-dom|react-router-dom)[\\/]/.test(id)) return 'vendor'
+            if (/node_modules[\\/](react|react-dom|react-router|react-router-dom)[\\/]/.test(id)) return 'vendor'
           }
         },
       },

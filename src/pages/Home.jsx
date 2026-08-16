@@ -1,3 +1,4 @@
+import Seo from '@/components/common/Seo'
 import HeroSection from '@/components/home/HeroSection'
 import ProjectsSection from '@/components/home/ProjectsSection'
 import AboutSection from '@/components/home/AboutSection'
@@ -11,6 +12,7 @@ import siteConfig from '@/content/siteConfig'
 import mediaManifest from '@/content/mediaManifest'
 
 const heroMedia = mediaManifest[siteConfig.media.heroBackground]
+const ogMedia = mediaManifest[siteConfig.media.ogCover]
 
 // `projects[].cover` stores a siteConfig.media lookup key (e.g. "projectCover"),
 // not a raw mediaManifest key — resolve it here so components stay content-free.
@@ -22,6 +24,12 @@ const resolvedProjects = projects.map((project) => ({
 export default function Home() {
   return (
     <>
+      <Seo
+        title={siteConfig.seo.title}
+        description={siteConfig.seo.description}
+        image={ogMedia?.jpg || ogMedia?.src || siteConfig.seo.ogImage}
+        path="/"
+      />
       <HeroSection
         name={siteConfig.name}
         role={siteConfig.role}

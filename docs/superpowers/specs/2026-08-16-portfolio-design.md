@@ -38,17 +38,39 @@ no server-side rendering.
 
 | Layer | Choice | Reason |
 |---|---|---|
-| Build | Vite 5 | Fast dev, minimal config, plain static output |
-| UI runtime | React 18 | Matches MUI v5 / Material Kit conventions |
-| Components | MUI v5 | Required by the brief |
-| Styling | Emotion (`styled` + `sx`) | MUI v5's native engine; no second CSS system |
+| Build | Vite 8 | Fast dev, minimal config, plain static output |
+| UI runtime | React 19 | Current stable; what MUI v9 targets |
+| Components | MUI v9 | Required by the brief |
+| Styling | Emotion (`styled` + `sx`) | MUI's native engine; no second CSS system |
 | Layout reference | Material Kit React | Hero + card + sectioned-hierarchy conventions |
-| Routing | react-router-dom v6 | Two routes, case study lazy-loaded |
-| Motion | framer-motion | Scroll reveal, hero entrance; MUI transitions for the small stuff |
+| Routing | react-router-dom v7 | Two routes, case study lazy-loaded |
+| Motion | framer-motion v13 | Scroll reveal, hero entrance; MUI transitions for the small stuff |
 | Media | Local files in `public/media/` | Notion URLs are signed and expire |
 | Hosting | Static `dist/` on Hetzner + nginx, custom domain | User-owned infrastructure |
 
-**Node:** 20 LTS. **Package manager:** npm.
+**Node:** 26.7.0 local. **Package manager:** npm 11.
+
+### 2.1 Version correction (2026-08-16)
+
+This table originally specified Vite 5 / React 18 / MUI v5 / react-router v6.
+The scaffold was built on the current stable releases instead, and the
+installed versions above are now authoritative. Anything written against
+MUI v5 conventions must be re-checked against v9 before it is trusted.
+
+Two v9 behaviour changes have already caused defects in this codebase:
+
+1. **`Typography` `color` accepts only enum tokens.** The dot-path form
+   `color="primary.main"` is silently dropped — the emitted class carries no
+   colour declaration at all (verified in
+   `node_modules/@mui/material/Typography/Typography.js`). Use `sx={{ color:
+   'primary.main' }}` instead.
+2. **`MuiButtonBase` injects `outline: 0`** after `CssBaseline` at equal
+   specificity, so a bare `:focus-visible` rule in `theme/components.js` never
+   wins. Focus rings must be declared via
+   `MuiButton.styleOverrides.root` + `&.Mui-focusVisible`.
+
+Grid/Stack layout props also leak to the DOM more readily than in v5; two
+builders hit this independently.
 
 ---
 
@@ -141,10 +163,14 @@ break within weeks. Everything is downloaded and optimized once.
 - `scripts/fetch-media.mjs` — reads every `media[]` array in
   `content-raw/`, downloads to `media-src/`, writes a manifest mapping
   original URL → local filename.
-- `scripts/optimize-media.mjs` — converts GIFs to **MP4 + WebM** (order
+- `scripts/optimize-media.mjs` — converts GIFs to **H.264 MP4** (order
   of magnitude smaller), generates a **WebP poster frame** per clip,
   resizes screenshots to a max width of 1600 px and emits WebP, and
   writes `src/content/mediaManifest.js`.
+  *Correction (Task 2, landed):* the WebM/VP9 output this spec originally
+  required was dropped, and the freed 8.3 MB spent on raising clips from
+  480 px to 720 px wide. Every current browser plays H.264 MP4 and every
+  clip carries a poster, so the second encode bought nothing.
 - Output lands in `public/media/`. `media-src/` is gitignored.
 - Clips render as muted, looping, `playsInline`, `preload="none"`
   `<video>` elements with the poster as the placeholder — visually a GIF,

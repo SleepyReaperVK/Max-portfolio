@@ -12,6 +12,12 @@ export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priorit
   const reduce = useReducedMotion()
   const videoRef = useRef(null)
   const [inView, setInView] = useState(false)
+  // Posters are real image requests, not free — loading all of them near page
+  // load (30+ on the case-study route) defeats `preload="none"`. Track
+  // whether the video has ever entered the viewport and only attach `poster`
+  // then; `priority` media skip the wait entirely. Monotonic (never resets)
+  // so scrolling away doesn't drop a poster that already loaded.
+  const [posterVisible, setPosterVisible] = useState(priority)
   const entry = mediaManifest[mediaKey]
 
   useEffect(() => {
@@ -36,7 +42,10 @@ export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priorit
     if (!node) return undefined
 
     const observer = new IntersectionObserver(
-      ([observedEntry]) => setInView(observedEntry.isIntersecting),
+      ([observedEntry]) => {
+        setInView(observedEntry.isIntersecting)
+        if (observedEntry.isIntersecting) setPosterVisible(true)
+      },
       { threshold: 0.25 },
     )
     observer.observe(node)
@@ -124,7 +133,7 @@ export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priorit
             loop
             playsInline
             preload="none"
-            poster={entry.poster}
+            poster={posterVisible ? entry.poster : undefined}
             width={entry.width}
             height={entry.height}
             aria-label={alt}
