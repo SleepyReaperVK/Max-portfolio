@@ -5,11 +5,11 @@ import { useTheme } from '@mui/material/styles'
 import Section from '@/components/common/Section'
 import AnimatedReveal from '@/components/common/AnimatedReveal'
 
-export default function SkillsSection({ skills = [] }) {
+export default function SkillsSection({ skills = [], heading = 'Skills', eyebrow = 'What I bring' }) {
   const theme = useTheme()
 
   return (
-    <Section id="skills" title="Skills" eyebrow="What I bring">
+    <Section id="skills" title={heading} eyebrow={eyebrow}>
       <Grid container spacing={3}>
         {skills.map((skill, index) => (
           <Grid key={skill.name} size={{ xs: 12, sm: 6, md: 4 }}>
@@ -30,8 +30,13 @@ export default function SkillsSection({ skills = [] }) {
                   },
                 }}
               >
-                <Typography variant="h6" component="p" color="primary.main" sx={{ mb: 1 }}>
-                  {skill.category?.toUpperCase()}
+                <Typography
+                  variant="h6"
+                  component="p"
+                  color="primary.main"
+                  sx={{ mb: 1, textTransform: 'uppercase' }}
+                >
+                  {skill.category}
                 </Typography>
                 <Typography variant="h5" component="h3" sx={{ mb: 1.5 }}>
                   {skill.name}

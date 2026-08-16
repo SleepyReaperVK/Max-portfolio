@@ -6,7 +6,7 @@ import Section from '@/components/common/Section'
 import AnimatedReveal from '@/components/common/AnimatedReveal'
 import MediaFrame from '@/components/common/MediaFrame'
 
-export default function AboutSection({ heading, paragraphs = [], portraitKey }) {
+export default function AboutSection({ heading, paragraphs = [], portraitKey, portraitAlt }) {
   const theme = useTheme()
 
   return (
@@ -32,6 +32,8 @@ export default function AboutSection({ heading, paragraphs = [], portraitKey }) 
           <AnimatedReveal delay={0.06}>
             <Box
               sx={{
+                maxWidth: { xs: theme.spacing(40), md: 'none' },
+                mx: { xs: 'auto', md: 0 },
                 borderRadius: 2,
                 border: '1px solid',
                 borderColor: 'divider',
@@ -47,7 +49,7 @@ export default function AboutSection({ heading, paragraphs = [], portraitKey }) 
                 },
               }}
             >
-              <MediaFrame mediaKey={portraitKey} alt="Portrait of Max Masarski" ratio="4 / 5" />
+              <MediaFrame mediaKey={portraitKey} alt={portraitAlt} ratio="4 / 5" />
             </Box>
           </AnimatedReveal>
         </Grid>
