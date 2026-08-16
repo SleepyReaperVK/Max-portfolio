@@ -18,7 +18,7 @@ const levelDesign = {
         'The dungeon connects seamlessly to an adjacent prison section, which serves as an early-game area and a natural extension of the dungeon’s narrative and spatial flow.',
       ],
       media: [
-        { key: 'level-design-prison-section', alt: 'Prison section connecting to the dungeon as an early-game area', caption: 'Prison Section' },
+        { key: 'level-design-prison-section', alt: 'Top-down navmesh view of the prison section, showing cyan AI navigation-mesh geometry and red AI-perception markers across the layout', caption: 'Prison Section — Navmesh / AI Pathing Coverage' },
       ],
     },
     {
@@ -32,7 +32,7 @@ const levelDesign = {
       media: [
         { key: 'level-design-first-floor-entrance', alt: 'First floor dungeon entrance', caption: 'First Floor — First Dungeon Entrance' },
         { key: 'level-design-first-floor-main-hall', alt: 'First floor main hall', caption: 'First Floor — Main Hall' },
-        { key: 'level-design-first-floor-idol-of-death', alt: 'The Idol of Death upgrade statue on the first floor', caption: 'First Floor — The Idol Of Death (Upgrade Statue)' },
+        { key: 'level-design-first-floor-idol-of-death', alt: 'A candle-lit rest nook on the first floor with a round table holding a candelabra, a bottle, and a mug', caption: 'First Floor — Rest Nook' },
         { key: 'level-design-first-floor-tunnel', alt: 'First floor tunnel variant', caption: 'First Floor — Tunnel Variant 1' },
         { key: 'level-design-first-floor-second-entrance', alt: 'Second dungeon entrance on the first floor', caption: 'First Floor — Second Dungeon Entrance' },
         { key: 'level-design-second-floor-entrance', alt: 'Second floor entrance', caption: 'Second Floor — Second Floor Entrance' },
