@@ -16,18 +16,14 @@ export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priorit
   // so an effect keyed only on `[entry]` can never retry.
   const [videoNode, setVideoNode] = useState(null)
   const [inView, setInView] = useState(false)
-  // Posters are real image requests, not free — loading all of them near page
-  // load (30+ on the case-study route) defeats `preload="none"`. Track
-  // whether the video has come near the viewport and only attach `poster`
-  // then; `priority` media skip the wait entirely. Monotonic (never resets
-  // within a mount) so scrolling away doesn't drop a poster that already
-  // loaded. This runs off its OWN observer with a generous `rootMargin`,
-  // deliberately separate from the autoplay observer below (review round 1,
-  // I-4) — sharing one observer/threshold made the poster and the video
-  // request start at the same instant, which defeated the poster's entire
-  // purpose and left every not-yet-intersected clip with nothing to show,
-  // hitting prefers-reduced-motion users hardest since the poster is the
-  // only visual they ever get.
+  // Posters are real image requests (30+ on the case-study route), so they
+  // only attach once a video nears the viewport — not on page load, which
+  // would defeat `preload="none"`. `priority` media skip the wait. Monotonic:
+  // never resets, so scrolling away doesn't drop a poster already loaded. Its
+  // own observer/rootMargin, deliberately separate from the autoplay observer
+  // below — sharing one previously started the poster and video request at
+  // the same instant, leaving reduced-motion users (poster-only) with nothing
+  // to show (review round 1, I-4).
   const [posterVisible, setPosterVisible] = useState(priority)
   const entry = mediaManifest[mediaKey]
 

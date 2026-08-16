@@ -1,0 +1,51 @@
+# Example nginx server block for the Max Masarski portfolio site.
+#
+# This is a STARTING POINT, not a drop-in config: it assumes a build already
+# copied to /var/www/portfolio/dist (see DEPLOY.md) and a domain that is not
+# yet registered. Replace every "example.com" below with the real domain.
+#
+# HTTPS is deliberately left out of this block. Once the domain's A record
+# points at this server, run certbot against it (e.g.
+# `certbot --nginx -d example.com -d www.example.com`) — certbot rewrites
+# this file in place to add the `listen 443 ssl` server block and the
+# certificate paths, and adds an HTTP -> HTTPS redirect. Do that AFTER this
+# base config is verified working over plain HTTP, not before.
+
+server {
+    listen 80;
+    server_name example.com www.example.com;   # replace with the real domain
+    root /var/www/portfolio/dist;
+    index index.html;
+
+    # SPA fallback — required, or a hard refresh / direct link to
+    # /projects/pray-for-plagues 404s. React Router only sees this route
+    # client-side; nginx has no file at that path, so without try_files
+    # falling back to /index.html, nginx returns a bare 404 instead of
+    # letting the app boot and route itself.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Hashed assets: cache hard. Vite fingerprints every JS/CSS chunk by
+    # content hash, so a new deploy always ships new filenames — a 1-year
+    # cache here can never serve stale code.
+    location /assets/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Media and fonts: cache long, they are content-addressed by name
+    location ~* \.(woff2|mp4|webm|webp|jpg|png|svg)$ {
+        expires 30d;
+        add_header Cache-Control "public";
+    }
+
+    # index.html must never be cached, or deploys appear not to land
+    location = /index.html {
+        add_header Cache-Control "no-cache, must-revalidate";
+    }
+
+    gzip on;
+    gzip_types text/css application/javascript image/svg+xml application/json;
+    gzip_min_length 1024;
+}

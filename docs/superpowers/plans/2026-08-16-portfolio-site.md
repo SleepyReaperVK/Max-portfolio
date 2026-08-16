@@ -95,7 +95,7 @@ Each task is executed by a **low-effort builder agent** and then independently c
 | `src/components/home/{AboutSection,SkillsSection}.jsx` | About + skills | 5 |
 | `src/components/home/{ProjectsSection,ProjectCard}.jsx` | Project teasers | 6 |
 | `src/components/home/{AvailabilitySection,ContactSection}.jsx` | Availability + contact | 7 |
-| `src/components/project/{CaseStudyHero,AtAGlance,SystemBreakdown,SystemNav,MediaGallery,Lightbox}.jsx` | Case study | 8 |
+| `src/components/caseStudy/{CaseStudyHero,AtAGlance,SystemBreakdown,SystemNav,MediaGallery,Lightbox}.jsx` | Case study | 8 |
 | `index.html` meta, `src/components/common/Seo.jsx`, `public/favicon.svg` | SEO + polish | 9 |
 | `README.md`, `DEPLOY.md`, `nginx.conf.example` | Delivery docs | 10 |
 
@@ -1067,7 +1067,7 @@ git commit -m "feat(home): add availability band and contact section"
 ## Task 8: Pray For Plagues case-study page
 
 **Files:**
-- Create: `src/components/project/CaseStudyHero.jsx`, `AtAGlance.jsx`, `SystemNav.jsx`, `SystemBreakdown.jsx`, `MediaGallery.jsx`, `Lightbox.jsx`
+- Create: `src/components/caseStudy/CaseStudyHero.jsx`, `AtAGlance.jsx`, `SystemNav.jsx`, `SystemBreakdown.jsx`, `MediaGallery.jsx`, `Lightbox.jsx`
 - Modify: `src/pages/PrayForPlagues.jsx`
 
 **Interfaces:**
@@ -1121,7 +1121,7 @@ Additionally: scroll the full page and confirm the sticky nav's active state tra
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/components/project src/pages/PrayForPlagues.jsx
+git add src/components/caseStudy src/pages/PrayForPlagues.jsx
 git commit -m "feat(project): add Pray For Plagues case study page"
 ```
 

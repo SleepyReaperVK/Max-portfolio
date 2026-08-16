@@ -288,7 +288,7 @@ verifier agent** before anything downstream starts.
 | 5 | About + Skills | `components/home/AboutSection.jsx`, `SkillsSection.jsx` | 1, 3 | 4, 6, 7 |
 | 6 | Projects + card | `components/home/ProjectsSection.jsx`, `ProjectCard.jsx` | 1, 3 | 4, 5, 7 |
 | 7 | Availability + Contact | `components/home/AvailabilitySection.jsx`, `ContactSection.jsx` | 1, 3 | 4, 5, 6 |
-| 8 | Case study page | `components/project/*`, `pages/PrayForPlagues.jsx` | 1, 2, 3 | 4–7 |
+| 8 | Case study page | `components/caseStudy/*`, `pages/PrayForPlagues.jsx` | 1, 2, 3 | 4–7 |
 | 9 | Polish pass | motion tuning, lazy media, code-split, SEO/OG tags, favicon, 404 | 4–8 | — |
 | 10 | Prod build + deploy artifacts | `nginx.conf.example`, `README.md`, `DEPLOY.md`, `.gitignore` | 9 | — |
 

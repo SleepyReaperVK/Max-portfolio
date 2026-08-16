@@ -66,7 +66,7 @@ export default function Seo({
     upsertMeta('property', 'og:type', type)
     upsertMeta('property', 'og:title', title)
     upsertMeta('property', 'og:description', description)
-    upsertMeta('property', 'og:url', url)
+    upsertMeta('property', 'og:url', noindex ? undefined : url)
     upsertMeta('property', 'og:image', absoluteImage)
     upsertMeta('property', 'og:site_name', siteName)
 

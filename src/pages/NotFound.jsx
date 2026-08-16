@@ -5,13 +5,20 @@ import { Link as RouterLink } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
 import Section from '@/components/common/Section'
 import Seo from '@/components/common/Seo'
+import siteConfig from '@/content/siteConfig'
 
 export default function NotFound() {
   const theme = useTheme()
 
   return (
     <Section id="not-found">
-      <Seo title="Page not found" description="This page doesn't exist." path="/404" noindex />
+      <Seo
+        title="Page not found"
+        description="This page doesn't exist."
+        path="/404"
+        noindex
+        siteName={siteConfig.name}
+      />
       <Box sx={{ textAlign: 'center', maxWidth: theme.custom.maxTextWidth, mx: 'auto' }}>
         <Typography variant="h1" component="h1" gutterBottom>
           Page not found
