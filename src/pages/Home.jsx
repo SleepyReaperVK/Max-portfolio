@@ -1,12 +1,21 @@
 import HeroSection from '@/components/home/HeroSection'
+import ProjectsSection from '@/components/home/ProjectsSection'
 import AboutSection from '@/components/home/AboutSection'
 import SkillsSection from '@/components/home/SkillsSection'
 import about from '@/content/about'
 import skills from '@/content/skills'
+import projects from '@/content/projects'
 import siteConfig from '@/content/siteConfig'
 import mediaManifest from '@/content/mediaManifest'
 
 const heroMedia = mediaManifest[siteConfig.media.heroBackground]
+
+// `projects[].cover` stores a siteConfig.media lookup key (e.g. "projectCover"),
+// not a raw mediaManifest key — resolve it here so components stay content-free.
+const resolvedProjects = projects.map((project) => ({
+  ...project,
+  cover: siteConfig.media[project.cover] || project.cover,
+}))
 
 export default function Home() {
   return (
@@ -23,7 +32,7 @@ export default function Home() {
         backgroundWidth={heroMedia?.width}
         backgroundHeight={heroMedia?.height}
       />
-      {/* MOUNT 2: ProjectsSection — Task 6 */}
+      <ProjectsSection projects={resolvedProjects} />
       <AboutSection
         heading={about.heading}
         paragraphs={about.paragraphs}
