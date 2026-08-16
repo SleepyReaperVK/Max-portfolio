@@ -2,6 +2,8 @@ import HeroSection from '@/components/home/HeroSection'
 import ProjectsSection from '@/components/home/ProjectsSection'
 import AboutSection from '@/components/home/AboutSection'
 import SkillsSection from '@/components/home/SkillsSection'
+import AvailabilitySection from '@/components/home/AvailabilitySection'
+import ContactSection from '@/components/home/ContactSection'
 import about from '@/content/about'
 import skills from '@/content/skills'
 import projects from '@/content/projects'
@@ -40,7 +42,12 @@ export default function Home() {
         portraitAlt={`Portrait of ${siteConfig.name}`}
       />
       <SkillsSection skills={skills} />
-      {/* MOUNT 5: AvailabilitySection + ContactSection — Task 7 */}
+      <AvailabilitySection
+        modes={siteConfig.availability.modes}
+        location={siteConfig.location}
+        note={siteConfig.availability.note}
+      />
+      <ContactSection email={siteConfig.email} links={siteConfig.links} cv={siteConfig.cv} />
     </>
   )
 }
