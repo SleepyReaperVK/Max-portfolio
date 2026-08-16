@@ -28,6 +28,7 @@ export default function Home() {
         title={siteConfig.seo.title}
         description={siteConfig.seo.description}
         image={ogMedia?.jpg || ogMedia?.src || siteConfig.seo.ogImage}
+        siteName={siteConfig.name}
         path="/"
       />
       <HeroSection

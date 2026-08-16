@@ -127,7 +127,14 @@ export default function HeroSection({
             zIndex: 2,
             color: 'text.secondary',
             display: 'flex',
-            animation: `hero-scroll-cue ${theme.custom.motion.slow}ms ${theme.custom.motion.easing} infinite`,
+            // `motion.slow` is a one-shot transition ceiling, not a loop
+            // period — this is an `infinite` idle cue, so the number below is
+            // deliberately `slow * 2` (1400ms), not clamped to `slow` itself.
+            // Halving it to 700ms (review round 1, reverted) doubles the
+            // bounce frequency and turns a calm cue into a twitchy one; the
+            // audit's "no animation exceeds motion.slow" targets transitions,
+            // not this loop's period. Exemption noted here per review M-4.
+            animation: `hero-scroll-cue ${theme.custom.motion.slow * 2}ms ${theme.custom.motion.easing} infinite`,
             '@keyframes hero-scroll-cue': {
               '0%, 100%': { transform: 'translate(-50%, 0)' },
               '50%': { transform: `translate(-50%, ${theme.spacing(1)})` },

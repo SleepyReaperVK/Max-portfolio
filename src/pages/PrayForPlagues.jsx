@@ -22,6 +22,12 @@ import mediaManifest from '@/content/mediaManifest'
 // not a raw mediaManifest key — resolve it here so components stay content-free.
 const heroKey = siteConfig.media[prayForPlagues.hero.src] || prayForPlagues.hero.src
 const heroMedia = mediaManifest[heroKey]
+// `case-study-hero` has no `.jpg` variant (only Home's `.webp`, shared with
+// `hero-background`) — Facebook/Twitter's OG crawlers don't reliably support
+// WebP, so fall back to the site's dedicated JPEG social-card image rather
+// than shipping a WebP OG image here while Home ships a JPEG (review round
+// 1, I-3).
+const ogMedia = mediaManifest[siteConfig.media.ogCover]
 
 export default function PrayForPlagues() {
   const theme = useTheme()
@@ -40,7 +46,9 @@ export default function PrayForPlagues() {
       <Seo
         title={`${prayForPlagues.title} — Souls-borne Combat Prototype in Unreal Engine 5 | ${siteConfig.name}`}
         description="Pray For Plagues — Souls-borne combat prototype in Unreal Engine 5, covering combat, AI, inventory, interaction, audio, and level design systems built solo in C++ and Blueprints."
-        image={heroMedia?.src}
+        image={heroMedia?.jpg || ogMedia?.jpg || ogMedia?.src}
+        type="article"
+        siteName={siteConfig.name}
         path="/projects/pray-for-plagues"
       />
       <CaseStudyHero

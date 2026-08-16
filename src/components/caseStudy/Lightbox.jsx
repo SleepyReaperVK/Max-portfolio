@@ -88,6 +88,7 @@ export default function Lightbox({ items = [], index = 0, open, onClose, onNavig
                 controls
                 loop
                 playsInline
+                preload="metadata"
                 poster={item.poster}
                 width={item.width}
                 height={item.height}

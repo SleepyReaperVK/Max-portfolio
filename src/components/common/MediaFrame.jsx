@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useTheme, alpha } from '@mui/material/styles'
@@ -10,13 +10,24 @@ const warnedKeys = new Set()
 export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priority = false, onClick }) {
   const theme = useTheme()
   const reduce = useReducedMotion()
-  const videoRef = useRef(null)
+  // Callback ref (not useRef) so the intersection-observer effects below can
+  // depend on the node itself and re-arm if it's ever null on first render
+  // (review round 1, M-5) — a plain ref's `.current` isn't a reactive value,
+  // so an effect keyed only on `[entry]` can never retry.
+  const [videoNode, setVideoNode] = useState(null)
   const [inView, setInView] = useState(false)
   // Posters are real image requests, not free — loading all of them near page
   // load (30+ on the case-study route) defeats `preload="none"`. Track
-  // whether the video has ever entered the viewport and only attach `poster`
-  // then; `priority` media skip the wait entirely. Monotonic (never resets)
-  // so scrolling away doesn't drop a poster that already loaded.
+  // whether the video has come near the viewport and only attach `poster`
+  // then; `priority` media skip the wait entirely. Monotonic (never resets
+  // within a mount) so scrolling away doesn't drop a poster that already
+  // loaded. This runs off its OWN observer with a generous `rootMargin`,
+  // deliberately separate from the autoplay observer below (review round 1,
+  // I-4) — sharing one observer/threshold made the poster and the video
+  // request start at the same instant, which defeated the poster's entire
+  // purpose and left every not-yet-intersected clip with nothing to show,
+  // hitting prefers-reduced-motion users hardest since the poster is the
+  // only visual they ever get.
   const [posterVisible, setPosterVisible] = useState(priority)
   const entry = mediaManifest[mediaKey]
 
@@ -36,31 +47,41 @@ export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priorit
     }
   }, [entry, mediaKey, alt])
 
+  // Poster prefetch — fires well ahead of the viewport (large rootMargin, no
+  // intersection-ratio requirement) so the poster is already decoded and
+  // painted by the time the autoplay observer below actually fires.
   useEffect(() => {
-    if (!entry || entry.type !== 'video') return undefined
-    const node = videoRef.current
-    if (!node) return undefined
-
+    if (!entry || entry.type !== 'video' || !videoNode || posterVisible) return undefined
     const observer = new IntersectionObserver(
       ([observedEntry]) => {
-        setInView(observedEntry.isIntersecting)
         if (observedEntry.isIntersecting) setPosterVisible(true)
       },
+      { rootMargin: '600px 0px', threshold: 0 },
+    )
+    observer.observe(videoNode)
+    return () => observer.disconnect()
+  }, [entry, videoNode, posterVisible])
+
+  // Autoplay — tighter threshold, own observer, deliberately not shared with
+  // the poster prefetch above.
+  useEffect(() => {
+    if (!entry || entry.type !== 'video' || !videoNode) return undefined
+    const observer = new IntersectionObserver(
+      ([observedEntry]) => setInView(observedEntry.isIntersecting),
       { threshold: 0.25 },
     )
-    observer.observe(node)
+    observer.observe(videoNode)
     return () => observer.disconnect()
-  }, [entry])
+  }, [entry, videoNode])
 
   useEffect(() => {
-    const node = videoRef.current
-    if (!node) return
+    if (!videoNode) return
     if (inView && !reduce) {
-      node.play().catch(() => {})
+      videoNode.play().catch(() => {})
     } else {
-      node.pause()
+      videoNode.pause()
     }
-  }, [inView, reduce])
+  }, [inView, reduce, videoNode])
 
   const interactiveProps = onClick
     ? {
@@ -111,6 +132,10 @@ export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priorit
           overflow: 'hidden',
           borderRadius: 1,
           cursor: onClick ? 'pointer' : 'default',
+          // Themed placeholder so a not-yet-loaded image/poster is never a
+          // transparent hole onto the section background (review round 1,
+          // I-4) — matches the missing-media placeholder above.
+          bgcolor: alpha(theme.palette.text.primary, 0.04),
         }}
         {...interactiveProps}
       >
@@ -128,7 +153,7 @@ export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priorit
         ) : (
           <Box
             component="video"
-            ref={videoRef}
+            ref={setVideoNode}
             muted
             loop
             playsInline
