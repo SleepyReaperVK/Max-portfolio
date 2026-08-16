@@ -7,16 +7,19 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { useTheme, alpha } from '@mui/material/styles'
-import mediaManifest from '@/content/mediaManifest'
 import AnimatedReveal from '../common/AnimatedReveal'
 
-// Hero needs a full-bleed, viewport-covering background image with a scrim —
-// a different job than MediaFrame's aspect-ratio-boxed content frames — so it
-// resolves the manifest key itself, the same way MediaFrame does internally.
-export default function HeroSection({ name, role, tagline, ctas = [], backgroundKey }) {
+export default function HeroSection({
+  name,
+  role,
+  tagline,
+  ctas = [],
+  backgroundSrc,
+  backgroundWidth,
+  backgroundHeight,
+}) {
   const theme = useTheme()
   const reduceMotion = useReducedMotion()
-  const media = mediaManifest[backgroundKey]
 
   return (
     <Box
@@ -30,10 +33,12 @@ export default function HeroSection({ name, role, tagline, ctas = [], background
         overflow: 'hidden',
       }}
     >
-      {media ? (
+      {backgroundSrc ? (
         <Box
           component="img"
-          src={media.src}
+          src={backgroundSrc}
+          width={backgroundWidth}
+          height={backgroundHeight}
           alt=""
           loading="eager"
           decoding="async"
@@ -54,7 +59,7 @@ export default function HeroSection({ name, role, tagline, ctas = [], background
           position: 'absolute',
           inset: 0,
           zIndex: 1,
-          backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.background.default, 0.55)} 0%, ${alpha(theme.palette.background.default, 0.94)} 100%)`,
+          backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.background.default, 0.78)} 0%, ${alpha(theme.palette.background.default, 0.94)} 100%)`,
         }}
       />
 
@@ -67,7 +72,7 @@ export default function HeroSection({ name, role, tagline, ctas = [], background
           }}
         >
           <AnimatedReveal delay={0}>
-            <Typography variant="h6" component="p" color="primary.main">
+            <Typography variant="h6" component="p" sx={{ color: 'primary.main' }}>
               {role}
             </Typography>
           </AnimatedReveal>
@@ -81,8 +86,8 @@ export default function HeroSection({ name, role, tagline, ctas = [], background
           <AnimatedReveal delay={0.16}>
             <Typography
               variant="subtitle1"
-              color="text.secondary"
-              sx={{ maxWidth: theme.custom.maxTextWidth }}
+              component="p"
+              sx={{ color: 'text.secondary', maxWidth: theme.custom.maxTextWidth }}
             >
               {tagline}
             </Typography>
@@ -125,7 +130,7 @@ export default function HeroSection({ name, role, tagline, ctas = [], background
             animation: `hero-scroll-cue ${theme.custom.motion.slow * 2}ms ${theme.custom.motion.easing} infinite`,
             '@keyframes hero-scroll-cue': {
               '0%, 100%': { transform: 'translate(-50%, 0)' },
-              '50%': { transform: 'translate(-50%, 8px)' },
+              '50%': { transform: `translate(-50%, ${theme.spacing(1)})` },
             },
           }}
         >

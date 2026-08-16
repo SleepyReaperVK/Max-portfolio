@@ -1,5 +1,8 @@
 import HeroSection from '@/components/home/HeroSection'
 import siteConfig from '@/content/siteConfig'
+import mediaManifest from '@/content/mediaManifest'
+
+const heroMedia = mediaManifest[siteConfig.media.heroBackground]
 
 export default function Home() {
   return (
@@ -12,7 +15,9 @@ export default function Home() {
           { label: 'View the case study', href: '/projects/pray-for-plagues', variant: 'contained' },
           { label: 'Get in touch', href: '#contact', variant: 'outlined' },
         ]}
-        backgroundKey={siteConfig.media.heroBackground}
+        backgroundSrc={heroMedia?.src}
+        backgroundWidth={heroMedia?.width}
+        backgroundHeight={heroMedia?.height}
       />
       {/* MOUNT 2: ProjectsSection — Task 6 */}
       {/* MOUNT 3: AboutSection — Task 5 */}
