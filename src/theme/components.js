@@ -26,8 +26,36 @@ const components = (theme) => ({
   MuiButton: {
     defaultProps: { disableElevation: true },
     styleOverrides: {
-      root: { borderRadius: 8, paddingInline: theme.spacing(3), paddingBlock: theme.spacing(1.25) },
+      root: {
+        borderRadius: 8,
+        paddingInline: theme.spacing(3),
+        paddingBlock: theme.spacing(1.25),
+        '&.Mui-focusVisible': {
+          outline: `2px solid ${theme.palette.primary.main}`,
+          outlineOffset: 2,
+        },
+      },
       outlinedPrimary: { borderColor: theme.palette.divider },
+    },
+  },
+  MuiIconButton: {
+    styleOverrides: {
+      root: {
+        '&.Mui-focusVisible': {
+          outline: `2px solid ${theme.palette.primary.main}`,
+          outlineOffset: 2,
+        },
+      },
+    },
+  },
+  MuiChip: {
+    styleOverrides: {
+      root: {
+        '&.Mui-focusVisible': {
+          outline: `2px solid ${theme.palette.primary.main}`,
+          outlineOffset: 2,
+        },
+      },
     },
   },
   MuiPaper: { styleOverrides: { root: { backgroundImage: 'none', borderRadius: 8 } } },

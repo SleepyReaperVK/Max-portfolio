@@ -20,8 +20,13 @@ export default function ContactSection({ email, links, cv }) {
         <Typography
           variant="subtitle1"
           component="p"
-          color="text.secondary"
-          sx={{ maxWidth: theme.custom.maxTextWidth, mx: 'auto', mb: { xs: 4, md: 5 }, textAlign: 'center' }}
+          sx={{
+            color: 'text.secondary',
+            maxWidth: theme.custom.maxTextWidth,
+            mx: 'auto',
+            mb: { xs: 4, md: 5 },
+            textAlign: 'center',
+          }}
         >
           Reach out about gameplay programming roles, collaborations, or the projects above — I read every message.
         </Typography>
@@ -107,8 +112,7 @@ export default function ContactSection({ email, links, cv }) {
           <Typography
             component="p"
             variant="body1"
-            color="text.secondary"
-            sx={{ userSelect: 'text' }}
+            sx={{ color: 'text.secondary', userSelect: 'text' }}
           >
             {email}
           </Typography>

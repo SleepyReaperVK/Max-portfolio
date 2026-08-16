@@ -19,7 +19,7 @@ export default function SectionHeading({ eyebrow, title, align = 'left' }) {
       }}
     >
       {eyebrow ? (
-        <Typography variant="h6" component="p" color="primary.main" sx={{ mb: 1.5 }}>
+        <Typography variant="h6" component="p" sx={{ color: 'primary.main', mb: 1.5 }}>
           {eyebrow}
         </Typography>
       ) : null}

@@ -13,7 +13,7 @@ export default function PrayForPlagues() {
       <Typography variant="h1" gutterBottom>
         {prayForPlagues.title}
       </Typography>
-      <Typography variant="subtitle1" color="text.secondary" sx={{ maxWidth: theme.custom.maxTextWidth, mb: 4 }}>
+      <Typography variant="subtitle1" sx={{ color: 'text.secondary', maxWidth: theme.custom.maxTextWidth, mb: 4 }}>
         {prayForPlagues.tagline}
       </Typography>
 

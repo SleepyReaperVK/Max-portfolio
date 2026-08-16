@@ -33,15 +33,14 @@ export default function SkillsSection({ skills = [], heading = 'Skills', eyebrow
                 <Typography
                   variant="h6"
                   component="p"
-                  color="primary.main"
-                  sx={{ mb: 1, textTransform: 'uppercase' }}
+                  sx={{ color: 'primary.main', mb: 1, textTransform: 'uppercase' }}
                 >
                   {skill.category}
                 </Typography>
                 <Typography variant="h5" component="h3" sx={{ mb: 1.5 }}>
                   {skill.name}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                   {skill.blurb}
                 </Typography>
               </Paper>

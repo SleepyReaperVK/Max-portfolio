@@ -12,11 +12,11 @@ export default function NotFound() {
       <Typography variant="h1" gutterBottom>
         404
       </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ maxWidth: theme.custom.maxTextWidth }}>
+      <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: theme.custom.maxTextWidth }}>
         This page doesn&apos;t exist.
       </Typography>
       <Box sx={{ mt: 3 }}>
-        <Typography component={RouterLink} to="/" variant="body1" color="primary.main">
+        <Typography component={RouterLink} to="/" variant="body1" sx={{ color: 'primary.main' }}>
           Back to home
         </Typography>
       </Box>

@@ -68,10 +68,10 @@ export default function ProjectCard({ project, featured = false }) {
           <Typography id={titleId} variant="h3" component="h3">
             {project.title}
           </Typography>
-          <Typography variant="h6" component="p" color="primary.main">
+          <Typography variant="h6" component="p" sx={{ color: 'primary.main' }}>
             {project.tagline}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {project.summary}
           </Typography>
           <Stack direction="row" gap={1} sx={{ flexWrap: 'wrap' }}>

@@ -19,8 +19,7 @@ export default function AboutSection({ heading, paragraphs = [], portraitKey, po
                 <Typography
                   key={index}
                   variant="body1"
-                  color="text.secondary"
-                  sx={{ mb: index === paragraphs.length - 1 ? 0 : 2.5 }}
+                  sx={{ color: 'text.secondary', mb: index === paragraphs.length - 1 ? 0 : 2.5 }}
                 >
                   {paragraph}
                 </Typography>

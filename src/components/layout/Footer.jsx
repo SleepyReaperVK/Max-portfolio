@@ -20,7 +20,7 @@ export default function Footer({ siteConfig }) {
           gap: 2,
         }}
       >
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {siteConfig?.name} &copy; {year}
         </Typography>
 
@@ -61,7 +61,7 @@ export default function Footer({ siteConfig }) {
           ) : null}
         </Box>
 
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
           Built with React &amp; MUI
         </Typography>
       </Container>

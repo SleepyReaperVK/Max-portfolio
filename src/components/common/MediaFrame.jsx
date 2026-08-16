@@ -84,7 +84,7 @@ export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priorit
         }}
         {...interactiveProps}
       >
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
           Missing media: {mediaKey}
         </Typography>
       </Box>
@@ -136,7 +136,7 @@ export default function MediaFrame({ mediaKey, alt = '', caption, ratio, priorit
         )}
       </Box>
       {caption ? (
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+        <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1 }}>
           {caption}
         </Typography>
       ) : null}

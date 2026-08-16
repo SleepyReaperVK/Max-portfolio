@@ -65,8 +65,7 @@ export default function AvailabilitySection({ modes, location, note }) {
         <Typography
           variant="subtitle1"
           component="p"
-          color="text.secondary"
-          sx={{ maxWidth: theme.custom.maxTextWidth, mb: { xs: 4, md: 5 } }}
+          sx={{ color: 'text.secondary', maxWidth: theme.custom.maxTextWidth, mb: { xs: 4, md: 5 } }}
         >
           {note || `Based in ${location} and open to opportunities abroad and relocation.`}
         </Typography>
