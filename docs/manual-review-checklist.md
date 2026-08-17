@@ -99,26 +99,39 @@ Don't spend your time on these — they're measured, not eyeballed:
 | Fonts/scripts | zero external requests — nothing loads from another server |
 | Reduced motion | animations respect the OS setting |
 
-## ⚠️ What I could NOT verify — please check these too
+## ✅ Previously unverified — now checked by machine
 
-The automated browser pass did not run. It was attempted twice and both times
-the agent was killed by a process exit, and the browser tooling here needs a
-debug port that is also used by your own Chrome — I won't spawn into that.
+These were listed here as "could not verify" because the browser pass kept
+failing. It has since run in full (2026-08-17) against a production build, using
+its own Chrome so it could not collide with yours. Full detail:
+`.superpowers/sdd/2026-08-16-portfolio-site/browser-end-pass-report.md`.
 
-So these are **unverified**, not passed. They're quick, but they need a browser:
+| Was unverified | Result |
+|---|---|
+| Keyboard focus rings | **Pass.** 18 of 18 tabbable elements on the home page show a 2 px gold ring under real Tab presses. Hover does not. |
+| Console clean | **Pass.** Zero errors and zero warnings on all three routes. |
+| Page titles change | **Pass.** Title, description, canonical and OG all update per route. |
+| Anchor links from the case study | **Pass.** "Get in touch" from the case study lands on the contact section, not the top of the page. |
+| Sideways scroll | **Pass.** Zero overflow at 390 / 768 / 1440 with the hiding rule forced off, so nothing is being masked. |
+| Favicon | **Pass.** Serves 200 as an SVG. |
+| 404 page | **Pass.** Renders, and is marked `noindex, nofollow`. |
 
-- [ ] **Keyboard focus rings.** Press `Tab` repeatedly through both pages. Every
-      link and button should show a visible ring. This one matters most — a
-      site-wide missing focus ring was found and fixed earlier, but the fix was
-      only ever confirmed in code, never by actually pressing Tab.
-- [ ] **Console clean.** F12 → Console, reload each route. Should be empty —
-      no red errors, no yellow warnings.
-- [ ] **Page titles change.** Watch the browser tab while you go home → case
-      study → a bad URL like `/nope`. The tab text should change each time.
-- [ ] **Anchor links.** Click "Get in touch" from the case-study page. It should
-      scroll to the contact section, not dump you at the top of the home page.
-      (This exact bug was found and fixed once already.)
-- [ ] **Sideways scroll on phone** (already in §6, but it's the one I most want
-      a second pair of eyes on).
-- [ ] **Favicon** shows in the tab.
-- [ ] **404 page** renders properly at any bad URL.
+Nothing on this list still needs your eyes. Your own pass through the site is
+still worth doing for taste and wording, which no script can judge — that is
+what the rest of this document covers.
+
+## Two calls that were yours — both decided (2026-08-17)
+
+Max reviewed both and accepted them as they are. No code changed. Recording the
+reasoning so nobody re-opens them as bugs later.
+
+- **The same image appears three times — ACCEPTED.** The hero background, the
+  project card cover, and the case study hero are all the same candlelit statue
+  shot. Nothing is broken; it just repeats. Left as-is deliberately.
+  *To reverse:* point `siteConfig.media.projectCover` at a different manifest
+  key (a combat or level-design still). One line, no other file involved.
+- **Lightbox sound — ACCEPTED.** Gallery thumbnails stay muted. A clip opened in
+  the large viewer has sound when you press play, and never autoplays. Correct
+  for the audio and feedback section, where the sound is the evidence.
+  *To reverse:* add `muted` to the `<video>` in
+  `src/components/caseStudy/Lightbox.jsx`.
