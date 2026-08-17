@@ -48,6 +48,21 @@ const components = (theme) => ({
       },
     },
   },
+  // ButtonBase zeroes `outline`, which beats the global `:focus-visible` rule in
+  // CssBaseline above at equal specificity — so every ButtonBase-derived
+  // component has to re-add the ring. ListItemButton was the one that never did,
+  // leaving the case study's sticky system nav (6 links) and the mobile drawer
+  // list focusable with no visible focus indicator.
+  MuiListItemButton: {
+    styleOverrides: {
+      root: {
+        '&.Mui-focusVisible': {
+          outline: `2px solid ${theme.palette.primary.main}`,
+          outlineOffset: 2,
+        },
+      },
+    },
+  },
   MuiChip: {
     styleOverrides: {
       root: {

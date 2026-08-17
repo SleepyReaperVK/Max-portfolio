@@ -20,6 +20,13 @@ const navLinkSx = (theme) => ({
   color: 'text.primary',
   textDecoration: 'none',
   fontWeight: 600,
+  // Matches the sticky system nav's hover treatment — without it the desktop
+  // nav links were the only interactive text on the site with no hover feedback.
+  transition: theme.transitions.create('color', {
+    duration: theme.custom.motion.fast,
+    easing: theme.custom.motion.easing,
+  }),
+  '&:hover': { color: 'primary.main' },
   '&:focus-visible': { outline: `2px solid ${theme.palette.primary.main}`, outlineOffset: 2 },
 })
 

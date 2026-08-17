@@ -31,10 +31,15 @@ export default function SystemNav({ systems = [], activeId: activeIdProp }) {
         const visible = elements.filter((element) => isIntersecting.get(element))
         if (visible.length === 0) return
 
-        const topMost = visible.reduce((closest, element) =>
-          element.getBoundingClientRect().top <= closest.getBoundingClientRect().top ? element : closest,
+        // Pick the section that entered the band *last* (greatest `top`), not
+        // the one highest on the page. Adjacent sections both intersect the
+        // narrow 30%-40% band during a transition, and the outgoing one always
+        // has the smaller `top` (it starts far above the viewport), so choosing
+        // the topmost kept the nav one section behind the heading on screen.
+        const current = visible.reduce((best, element) =>
+          element.getBoundingClientRect().top >= best.getBoundingClientRect().top ? element : best,
         )
-        setTrackedActiveId(topMost.id)
+        setTrackedActiveId(current.id)
       },
       { rootMargin: '-30% 0px -60% 0px', threshold: 0 },
     )
