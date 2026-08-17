@@ -120,6 +120,46 @@ Nothing on this list still needs your eyes. Your own pass through the site is
 still worth doing for taste and wording, which no script can judge — that is
 what the rest of this document covers.
 
+## ✅ Interaction pass — the clicks and drags (2026-08-17)
+
+An outside-eyes UI/UX review ran against the built site with no source access,
+then an interaction pass re-tested everything that review could not click
+(its browser was render-throttled). Both ran on a production build.
+
+| Check | Result |
+|---|---|
+| Gallery lightbox | **Pass.** Opens on click; `←`/`→` step (1→2→3→2 of 7); `Home`/`End` jump to first/last; `Esc` closes and returns focus to the image you opened; the X button closes too. |
+| Sticky system nav | **Pass** after a fix. Highlights the section you are actually reading, at all six sections. |
+| Mobile menu | **Pass.** Opens from the burger, closes on a link tap and on `Esc`, at both 390 and 768. |
+| Videos on scroll | **Pass.** All 30 muted, none autoplaying; a clip starts only once scrolled into view and pauses again when scrolled away. |
+| Hover states | **Pass.** Card lifts and its border warms; buttons darken; nav links go gold and reset cleanly. (The wordmark has no hover — deliberate.) |
+| Keyboard, case-study page | **Pass** after a fix. 45 stops walked, 0 without a visible ring. The earlier pass covered the home page only. |
+| Sideways scroll, case study | **Pass.** 0 overflowing elements at 390 and 768. |
+| Console | **Pass.** 0 errors and 0 warnings across both routes during all of the above. |
+
+### Four defects this found, all fixed
+
+1. **The featured project card's cover art overlapped the text column** by 73px
+   at 1440 — a hard seam cut through the first tech chip and the "Read the case
+   study" button. Its `aspect-ratio` was deriving a 763px width inside a 690px
+   column. The image now sits inside its column exactly.
+2. **The hero waited on a scroll observer before appearing**, so for a beat
+   after load the screen was near-black with only the gold eyebrow showing.
+   Above-the-fold content now animates on mount instead of on intersection.
+3. **The six sticky system-nav links had no visible focus ring** — `ListItemButton`
+   was the one MUI button type the theme never re-added the ring to.
+4. **The sticky nav highlighted the previous section**, not the one on screen: of
+   two sections touching the observer band, it picked the one higher up the page
+   instead of the one just entered.
+
+### What the review flagged as taste, still open for you
+
+Not defects — judgement calls it raised that only you can settle: two of the
+five skill tiles read as filler (Python, Blender), the gap between the project
+card and About is large, "Selected work" is plural over one card, the
+case-study sections are named after systems rather than the problem each solved,
+and there are four separate "Get in touch" buttons.
+
 ## Two calls that were yours — both decided (2026-08-17)
 
 Max reviewed both and accepted them as they are. No code changed. Recording the
