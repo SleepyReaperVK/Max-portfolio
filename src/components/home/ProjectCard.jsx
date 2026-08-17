@@ -51,6 +51,14 @@ export default function ProjectCard({ project, featured = false }) {
             width: featured ? { xs: '100%', md: '60%' } : '100%',
             flexShrink: 0,
             display: 'flex',
+            overflow: 'hidden',
+            // Forcing height to 100% below leaves MediaFrame's inner box with a
+            // definite height and an `aspect-ratio`, so the ratio was deriving
+            // its width (763px at 1440) and beating this 60% column — the cover
+            // art spilled 73px under the text column, cutting through the first
+            // chip and the CTA. Pinning both wrapper divs to the column width
+            // makes width definite again, so `object-fit: cover` does the crop.
+            '& > div': { width: '100%', minWidth: 0 },
             '& > div, & > div > div': { height: '100%' },
           }}
         >

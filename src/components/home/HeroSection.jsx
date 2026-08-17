@@ -69,19 +69,19 @@ export default function HeroSection({
             textAlign: { xs: 'center', md: 'left' },
           }}
         >
-          <AnimatedReveal delay={0}>
+          <AnimatedReveal delay={0} immediate>
             <Typography variant="h6" component="p" sx={{ color: 'primary.main' }}>
               {role}
             </Typography>
           </AnimatedReveal>
 
-          <AnimatedReveal delay={0.08}>
+          <AnimatedReveal delay={0.08} immediate>
             <Typography variant="h1" component="h1">
               {name}
             </Typography>
           </AnimatedReveal>
 
-          <AnimatedReveal delay={0.16}>
+          <AnimatedReveal delay={0.16} immediate>
             <Typography
               variant="subtitle1"
               component="p"
@@ -91,7 +91,7 @@ export default function HeroSection({
             </Typography>
           </AnimatedReveal>
 
-          <AnimatedReveal delay={0.24}>
+          <AnimatedReveal delay={0.24} immediate>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ pt: 1 }}>
               {ctas.map((cta) => {
                 const isHash = cta.href.startsWith('#')
