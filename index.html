@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0B0B0D" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!--
+      The @font-face rules live in the Emotion theme (src/theme/components.js) and
+      are therefore only emitted once ~185 kB of JS has parsed and React has
+      rendered. Without these two lines the hero h1 paints in Times New Roman and
+      then swaps to Cinzel. Preload only the two above-the-fold faces (display h1
+      + body); the remaining three are found by normal discovery.
+    -->
+    <link rel="preload" href="/fonts/cinzel-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
+
     <title>Max Masarski — Gameplay Programmer (Unreal Engine 5)</title>
     <meta
       name="description"

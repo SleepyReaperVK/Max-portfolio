@@ -57,7 +57,7 @@ npm ci
 | `public/media/` | The actual optimized, self-hosted media the site serves (89 files, ~24 MB total) |
 | `public/fonts/` | Self-hosted `.woff2` files, loaded via the `@font-face` rules in `src/theme/components.js`. This is how fonts actually ship — `@fontsource/cinzel`/`@fontsource/inter` are devDependencies used only to source these files, not runtime dependencies |
 | `public/favicon.svg`, `public/robots.txt` | Static, unprocessed — copied to `dist/` as-is by Vite |
-| `docs/` | `original-brief.md` (the original project brief) plus the `superpowers/` spec and plan this project was built from |
+| `docs/` | `original-brief.md` (the original project brief), `manual-review-checklist.md` (the owner's hand-off checklist — including the items never verified in a browser), plus the `superpowers/` spec and plan this project was built from |
 
 ## Routes
 
@@ -88,12 +88,12 @@ Components never hold copy or media references directly — the flow is:
 
 The `siteConfig.media` indirection layer is applied unevenly, and this README describes that as-found rather than as originally intended (re-wiring it now was ruled out of scope for a documentation-only task):
 
-- `siteConfig.media.portrait` is **dead** — `about.js:8` sets `portrait: 'portrait'`, but `Home.jsx` passes it to `AboutSection` as `portraitKey={about.portrait}`, straight to `MediaFrame`, never through `siteConfig.media`. **Editing `siteConfig.media.portrait` does nothing.** To change the portrait, edit `about.js`'s `portrait` field (a manifest key) directly.
+- The **portrait has no slot at all** — `about.js` holds a raw manifest key (`portrait: 'portrait'`) that `Home.jsx` passes to `AboutSection` as `portraitKey`, straight to `MediaFrame`. To change the portrait, edit `about.js`'s `portrait` field directly. (A dead `siteConfig.media.portrait` slot used to sit here, silently ignored; it was removed so nothing reads as live when it isn't.)
 - `siteConfig.media.heroBackground` and `siteConfig.media.ogCover` **are** read directly (`Home.jsx`, `PrayForPlagues.jsx`) — editing those does work.
 - `siteConfig.media.projectCover` and `siteConfig.media.caseStudyHero` are read only because `projects.js` and `prayForPlagues/index.js` store the slot *name* as a string and the page looks it up — editing the slot value works for these two.
 - Case-study gallery images (all `prayForPlagues/*.js` content modules' `media: [...]` arrays) bypass slots entirely — edit the `key:` field directly to point at a different manifest entry.
 
-If you're not sure which one applies to the image you're changing: **`siteConfig.media` is live for `heroBackground`, `ogCover`, `projectCover`, and `caseStudyHero` — edit the slot there. It is dead for `portrait` — edit the manifest key in `about.js` directly instead. For any gallery/system-breakdown image, always edit the manifest key in its content module directly — `siteConfig.media` was never in that path.**
+If you're not sure which one applies to the image you're changing: **`siteConfig.media` is live for `heroBackground`, `ogCover`, `projectCover`, and `caseStudyHero` — edit the slot there. The portrait has no slot — edit the manifest key in `about.js` directly instead. For any gallery/system-breakdown image, always edit the manifest key in its content module directly — `siteConfig.media` was never in that path.**
 
 ## Known placeholders
 

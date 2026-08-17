@@ -1,5 +1,4 @@
 import { Link as RouterLink } from 'react-router-dom'
-import { useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Stack from '@mui/material/Stack'
@@ -19,7 +18,6 @@ export default function HeroSection({
   backgroundHeight,
 }) {
   const theme = useTheme()
-  const reduceMotion = useReducedMotion()
 
   return (
     <Box
@@ -116,34 +114,26 @@ export default function HeroSection({
         </Stack>
       </Container>
 
-      {!reduceMotion ? (
-        <Box
-          aria-hidden="true"
-          sx={{
-            position: 'absolute',
-            bottom: theme.spacing(4),
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 2,
-            color: 'text.secondary',
-            display: 'flex',
-            // `motion.slow` is a one-shot transition ceiling, not a loop
-            // period — this is an `infinite` idle cue, so the number below is
-            // deliberately `slow * 2` (1400ms), not clamped to `slow` itself.
-            // Halving it to 700ms (review round 1, reverted) doubles the
-            // bounce frequency and turns a calm cue into a twitchy one; the
-            // audit's "no animation exceeds motion.slow" targets transitions,
-            // not this loop's period. Exemption noted here per review M-4.
-            animation: `hero-scroll-cue ${theme.custom.motion.slow * 2}ms ${theme.custom.motion.easing} infinite`,
-            '@keyframes hero-scroll-cue': {
-              '0%, 100%': { transform: 'translate(-50%, 0)' },
-              '50%': { transform: `translate(-50%, ${theme.spacing(1)})` },
-            },
-          }}
-        >
-          <KeyboardArrowDownIcon fontSize="large" />
-        </Box>
-      ) : null}
+      {/*
+        Static scroll cue. This was an infinite bounce; spec section 5 rules out
+        bouncing in as many words ("No parallax, no bouncing, no scroll-jacking"),
+        so the loop is gone and the chevron alone carries "there is more below".
+        With nothing animating there is also no reduced-motion branch to gate.
+      */}
+      <Box
+        aria-hidden="true"
+        sx={{
+          position: 'absolute',
+          bottom: theme.spacing(4),
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 2,
+          color: 'text.secondary',
+          display: 'flex',
+        }}
+      >
+        <KeyboardArrowDownIcon fontSize="large" />
+      </Box>
     </Box>
   )
 }

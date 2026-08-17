@@ -29,7 +29,6 @@ const siteConfig = {
   },
   media: {
     heroBackground: 'hero-background', // the main gameplay screenshot from the Notion landing page
-    portrait: 'portrait', // Max's photo
     projectCover: 'project-cover', // Pray For Plagues card cover
     caseStudyHero: 'case-study-hero', // case study page hero image
     ogCover: 'og-cover', // social share image
