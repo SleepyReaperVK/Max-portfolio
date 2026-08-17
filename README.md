@@ -110,3 +110,150 @@ Two smaller, honest content gaps (not blockers, but worth knowing):
 ## Deployment
 
 See [`DEPLOY.md`](DEPLOY.md) for the manual deploy steps and [`nginx.conf.example`](nginx.conf.example) for a starting server config. This repository does not deploy itself — there is no CI/CD wired up, and none is planned here.
+
+## Hosting on GitHub Pages
+
+GitHub Pages works for this site, but **only if it is served from the domain root.**
+
+### Read this first: root vs. subpath
+
+Every asset in the build is referenced by a **root-absolute path** — `/media/…`
+(all 89 files, from the auto-generated `src/content/mediaManifest.js`),
+`/fonts/*.woff2` (the two preload links in `index.html`), `/favicon.svg`, and
+`/media/og-cover.jpg`. Vite's `base` is left at its default `/`.
+
+That means:
+
+| Pages setup | Served at | Works? |
+|---|---|---|
+| **User/org site** — repo named exactly `<username>.github.io` | `https://<username>.github.io/` | ✅ yes, no changes |
+| **Any repo + a custom domain** | `https://yourdomain.com/` | ✅ yes, no changes |
+| **Project site** — any other repo name | `https://<username>.github.io/<repo>/` | ❌ every image, font and icon 404s |
+
+**Recommended: use a user/org site or a custom domain.** Since a custom domain
+is already the plan for this project, that path costs nothing extra.
+
+If you genuinely need a project site on a subpath, see
+[Appendix: subpath hosting](#appendix-subpath-hosting) — it is four coordinated
+changes, not a one-line config flag.
+
+### Steps (root hosting)
+
+1. **Create the repo and push.**
+
+   For a user site the repo name must be exactly `<username>.github.io`:
+
+   ```bash
+   git remote add origin https://github.com/<username>/<username>.github.io.git
+   git checkout main
+   git merge --ff-only feat/portfolio-site
+   git push -u origin main
+   ```
+
+2. **Add the SPA fallback and `.nojekyll`.** GitHub Pages is a static file host
+   with no rewrite rules, so a visitor who loads
+   `/projects/pray-for-plagues` directly — or refreshes on it — gets a 404
+   instead of the app. Pages serves `404.html` for any unmatched path, and
+   because this is a client-side router, an identical copy of `index.html`
+   there makes deep links work.
+
+   `.nojekyll` stops Pages from running the output through Jekyll, which
+   otherwise strips files and folders whose names begin with an underscore.
+
+   Both are already wired up — build with **`npm run build:pages`** instead of
+   `npm run build`, and `scripts/pages-postbuild.mjs` writes `dist/404.html`
+   and `dist/.nojekyll` for you.
+
+3. **Publish `dist/`.** Pages cannot build a Vite project on its own, so
+   either commit the built output to a `gh-pages` branch, or let a workflow do
+   it. The workflow is less error-prone — create
+   `.github/workflows/pages.yml`:
+
+   ```yaml
+   name: Deploy to GitHub Pages
+   on:
+     push:
+       branches: [main]
+     workflow_dispatch:
+
+   permissions:
+     contents: read
+     pages: write
+     id-token: write
+
+   concurrency:
+     group: pages
+     cancel-in-progress: true
+
+   jobs:
+     build:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v4
+         - uses: actions/setup-node@v4
+           with:
+             node-version: '22.12'
+             cache: npm
+         - run: npm ci
+         - run: npm run build:pages
+         - uses: actions/upload-pages-artifact@v3
+           with:
+             path: dist
+
+     deploy:
+       needs: build
+       environment:
+         name: github-pages
+         url: ${{ steps.deployment.outputs.page_url }}
+       runs-on: ubuntu-latest
+       steps:
+         - id: deployment
+           uses: actions/deploy-pages@v4
+   ```
+
+   The Node version matches this project's `engines` field
+   (`^20.19.0 || >=22.12.0`); an older Node will fail the Vite build.
+
+4. **Enable Pages.** Repo → **Settings → Pages → Build and deployment →
+   Source: GitHub Actions**. Push to `main`; the first run publishes.
+
+5. **Custom domain (optional).** Settings → Pages → Custom domain, then add
+   the DNS records GitHub shows you. Tick **Enforce HTTPS** once the
+   certificate is issued. Commit a `public/CNAME` file containing just the
+   domain, or Pages will drop the setting on the next deploy.
+
+6. **Set the real URL.** `src/content/siteConfig.js`'s `seo` block still holds
+   a placeholder domain, which is what the canonical link and the social-share
+   card use. Point it at the live URL — otherwise link previews on
+   LinkedIn/WhatsApp resolve to nothing.
+
+### Things worth knowing before you commit to Pages
+
+- **`public/media/` is 24 MB.** Well inside the 1 GB repo limit and the 100 MB
+  per-file limit, but every future media re-optimisation adds another copy to
+  git history. This is the main argument for the Hetzner route in `DEPLOY.md`.
+- **No control over headers.** Pages sets its own caching and cannot be
+  configured, so the cache tuning in `nginx.conf.example` does not apply. The
+  hashed filenames Vite emits still give correct cache-busting.
+- **Public repos only**, unless you have GitHub Pro or a paid org plan.
+- **Soft limits:** 100 GB/month bandwidth, roughly 10 builds/hour.
+
+### Appendix: subpath hosting
+
+Only if the site must live at `https://<username>.github.io/<repo>/`. Four
+changes have to land together:
+
+1. `vite.config.js` — add `base: '/<repo>/'`.
+2. `src/main.jsx` — give the router a matching base:
+   `<BrowserRouter basename={import.meta.env.BASE_URL}>`.
+3. `index.html` — the favicon and the two font preloads are literal
+   `/fonts/…` / `/favicon.svg` strings. Vite rewrites `src`/`href` on tags it
+   processes, but verify all three in `dist/index.html` after building and
+   prefix them with `%BASE_URL%` if they came through unchanged.
+4. `src/content/mediaManifest.js` — this file is **generated** by
+   `scripts/optimize-media.mjs`, so hand-editing it is lost on the next
+   `npm run media:optimize`. Change the generator to emit
+   `import.meta.env.BASE_URL + 'media/…'` (note: no leading slash), or resolve
+   the prefix inside `MediaFrame`. All 89 entries are affected.
+
+Given step 4, root hosting really is the cheaper answer.
