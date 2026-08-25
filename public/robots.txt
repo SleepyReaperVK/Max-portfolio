@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 
-# PLACEHOLDER DOMAIN: fill in once the real domain is registered.
-# Sitemap: https://maxmasarski.dev/sitemap.xml
+# No sitemap.xml is generated for this two-route site; the line below is kept
+# ready for when one is.
+# Sitemap: https://sleepyreapervk.github.io/sitemap.xml

@@ -1,11 +1,18 @@
 # Deploying the portfolio site
 
-This is a fully manual process — there is no CI/CD pipeline and this
-repository never deploys itself. Every step below is something **you** run,
-by hand, from your own machine or a shell on the Hetzner server.
+**This file covers the self-hosted (Hetzner + nginx) route only.** The site
+currently ships to GitHub Pages instead, automatically, via
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) on every push to
+`main` — see "Hosting on GitHub Pages" in [`README.md`](README.md). Keep this
+file as the fallback if the site ever moves off Pages.
+
+The Hetzner process below is fully manual. Every step is something **you** run,
+by hand, from your own machine or a shell on the server.
 
 The target server, domain, and everything past step 6 is out of scope for any
-automated agent working in this repo — that boundary is intentional.
+automated agent working in this repo — that boundary is intentional. Note that
+this boundary does **not** extend to the Pages workflow, which deploys itself
+by design.
 
 ## 1. Build locally
 
@@ -82,10 +89,12 @@ Update the domain registrar's DNS to add an A record (and `www` CNAME/A
 record) pointing at the server's IP. DNS propagation can take anywhere from
 minutes to a few hours.
 
-Once the domain resolves, update the two placeholder domain references in
-the codebase (`https://maxmasarski.dev` in `index.html` and `SITE_ORIGIN` in
-`src/components/common/Seo.jsx`) to the real domain, then rebuild and
-redeploy (steps 1–2 again).
+Once the domain resolves, update the domain references in the codebase to the
+real domain — they currently point at the GitHub Pages user site
+(`https://sleepyreapervk.github.io`), in three places that must stay in sync:
+`index.html` (canonical + `og:image` + `og:url`), `SITE_ORIGIN` in
+`src/components/common/Seo.jsx`, and the commented sitemap line in
+`public/robots.txt`. Then rebuild and redeploy (steps 1–2 again).
 
 ## 6. Enable HTTPS with certbot
 

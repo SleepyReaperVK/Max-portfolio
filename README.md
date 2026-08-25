@@ -34,6 +34,7 @@ npm ci
 |---|---|
 | `npm run dev` | Vite dev server with HMR |
 | `npm run build` | Production build to `dist/` |
+| `npm run build:pages` | `build` plus `scripts/pages-postbuild.mjs`, which writes `dist/404.html` (SPA deep-link fallback) and `dist/.nojekyll`. **This is what the GitHub Pages workflow runs** — use it, not `build`, for anything Pages serves |
 | `npm run preview` | Serves the built `dist/` locally, for a final pre-deploy check |
 | `npm run media` | Runs `media:fetch` then `media:optimize`. **This was a one-shot import script, not a repeatable content workflow — do not run it to update an existing image** (see "Known inconsistency" below and the media:fetch row). It has no purpose left once `media-src/` and `public/media/` are in their current state |
 | `npm run media:fetch` | Downloaded every media asset referenced by `content-raw/*.json` (the Notion scrape) into `media-src/`, once, during initial content import. Notion's asset URLs are signed and expired long ago, so **this can no longer run to completion** — it hard-exits on the first failed download (`fetch-media.mjs:110`/`115`). It also has no skip-if-exists guard, so even if the URLs still worked it would silently overwrite any manual replacement already sitting in `media-src/`. Kept for provenance/reference only |
@@ -104,130 +105,77 @@ Two things are intentionally left unfilled, and both are invisible while unfille
 
 Two smaller, honest content gaps (not blockers, but worth knowing):
 
-3. **Canonical/OG domain is a placeholder** — `https://maxmasarski.dev` is used in `index.html` and `SITE_ORIGIN` in `src/components/common/Seo.jsx`. It is not a registered domain. Replace both occurrences with the real domain once one exists (see `DEPLOY.md`).
+3. **Canonical/OG domain is the Pages origin, not a custom domain** — `https://sleepyreapervk.github.io` is set in three places that must stay in sync: `index.html` (canonical + `og:image` + `og:url`), `SITE_ORIGIN` in `src/components/common/Seo.jsx`, and the commented sitemap line in `public/robots.txt`. This is correct and live; update all three together if a custom domain is ever added.
 4. **`hero-background`, `project-cover`, and `case-study-hero` all resolve to the same physical image** (`/media/hero-background.webp` — see the `IMAGE_ALIASES` map in `scripts/optimize-media.mjs`). A distinct, purpose-shot project-cover image (e.g. a tighter crop or a different in-game moment) would read better on the project card than reusing the hero shot.
 
 ## Deployment
 
-See [`DEPLOY.md`](DEPLOY.md) for the manual deploy steps and [`nginx.conf.example`](nginx.conf.example) for a starting server config. This repository does not deploy itself — there is no CI/CD wired up, and none is planned here.
+The site is hosted on **GitHub Pages** and deploys itself: [`.github/workflows/pages.yml`](.github/workflows/pages.yml) builds and publishes on every push to `main`. See [Hosting on GitHub Pages](#hosting-on-github-pages) below.
+
+[`DEPLOY.md`](DEPLOY.md) and [`nginx.conf.example`](nginx.conf.example) document the alternative self-hosted (Hetzner + nginx) route, kept as a fallback. That one is fully manual.
 
 ## Hosting on GitHub Pages
 
-GitHub Pages works for this site, but **only if it is served from the domain root.**
+**This is the live setup.** The site is a GitHub Pages **user site**, served
+from `https://sleepyreapervk.github.io/` — the domain root.
 
-### Read this first: root vs. subpath
+### Why the domain root matters
 
-Every asset in the build is referenced by a **root-absolute path** — `/media/…`
+Every asset in the build is referenced by a **root-absolute path**: `/media/…`
 (all 89 files, from the auto-generated `src/content/mediaManifest.js`),
 `/fonts/*.woff2` (the two preload links in `index.html`), `/favicon.svg`, and
 `/media/og-cover.jpg`. Vite's `base` is left at its default `/`.
 
-That means:
-
 | Pages setup | Served at | Works? |
 |---|---|---|
-| **User/org site** — repo named exactly `<username>.github.io` | `https://<username>.github.io/` | ✅ yes, no changes |
+| **User/org site** — repo named exactly `<username>.github.io` | `https://<username>.github.io/` | ✅ **what this repo uses** |
 | **Any repo + a custom domain** | `https://yourdomain.com/` | ✅ yes, no changes |
 | **Project site** — any other repo name | `https://<username>.github.io/<repo>/` | ❌ every image, font and icon 404s |
 
-**Recommended: use a user/org site or a custom domain.** Since a custom domain
-is already the plan for this project, that path costs nothing extra.
+The repo is therefore named `SleepyReaperVK.github.io`, not something like
+`Max-portfolio`. Renaming it to anything else breaks every asset on the site
+unless the four changes in [Appendix: subpath hosting](#appendix-subpath-hosting)
+land together.
 
-If you genuinely need a project site on a subpath, see
-[Appendix: subpath hosting](#appendix-subpath-hosting) — it is four coordinated
-changes, not a one-line config flag.
+### How it deploys
 
-### Steps (root hosting)
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) runs on every push
+to `main` (and on manual dispatch). It installs with `npm ci`, runs
+`npm run check:theme` as a gate, builds with **`npm run build:pages`**, and
+uploads `dist/` as the Pages artifact. Nothing built is committed to the repo.
 
-1. **Create the repo and push.**
+`build:pages` rather than `build` is deliberate — it additionally runs
+`scripts/pages-postbuild.mjs`, which writes:
 
-   For a user site the repo name must be exactly `<username>.github.io`:
+- **`dist/404.html`** (a copy of `index.html`). Pages has no rewrite rules, so a
+  visitor who loads `/projects/pray-for-plagues` directly, or refreshes on it,
+  would get a 404. Pages serves `404.html` for any unmatched path, which hands
+  control back to the client-side router.
+- **`dist/.nojekyll`**, which stops Pages running the output through Jekyll —
+  Jekyll strips files and folders whose names begin with an underscore.
 
-   ```bash
-   git remote add origin https://github.com/<username>/<username>.github.io.git
-   git checkout main
-   git merge --ff-only feat/portfolio-site
-   git push -u origin main
-   ```
+The workflow pins Node `22.12` to match this project's `engines` field
+(`^20.19.0 || >=22.12.0`); an older Node fails the Vite build.
 
-2. **Add the SPA fallback and `.nojekyll`.** GitHub Pages is a static file host
-   with no rewrite rules, so a visitor who loads
-   `/projects/pray-for-plagues` directly — or refreshes on it — gets a 404
-   instead of the app. Pages serves `404.html` for any unmatched path, and
-   because this is a client-side router, an identical copy of `index.html`
-   there makes deep links work.
+### One-time repo settings
 
-   `.nojekyll` stops Pages from running the output through Jekyll, which
-   otherwise strips files and folders whose names begin with an underscore.
+Settings → Pages → Build and deployment → **Source: GitHub Actions**. Without
+this the workflow runs but nothing is published.
 
-   Both are already wired up — build with **`npm run build:pages`** instead of
-   `npm run build`, and `scripts/pages-postbuild.mjs` writes `dist/404.html`
-   and `dist/.nojekyll` for you.
+### Adding a custom domain later
 
-3. **Publish `dist/`.** Pages cannot build a Vite project on its own, so
-   either commit the built output to a `gh-pages` branch, or let a workflow do
-   it. The workflow is less error-prone — create
-   `.github/workflows/pages.yml`:
+Settings → Pages → Custom domain, then add the DNS records GitHub shows, and
+tick **Enforce HTTPS** once the certificate is issued. Commit a `public/CNAME`
+file containing just the domain, or Pages drops the setting on the next deploy.
 
-   ```yaml
-   name: Deploy to GitHub Pages
-   on:
-     push:
-       branches: [main]
-     workflow_dispatch:
+A custom domain also serves from root, so no build changes are needed — but
+three files hold the site origin and must be updated together:
+`index.html` (canonical + `og:image` + `og:url`), `SITE_ORIGIN` in
+`src/components/common/Seo.jsx`, and the commented sitemap line in
+`public/robots.txt`. Otherwise link previews on LinkedIn/WhatsApp resolve to
+the old origin.
 
-   permissions:
-     contents: read
-     pages: write
-     id-token: write
-
-   concurrency:
-     group: pages
-     cancel-in-progress: true
-
-   jobs:
-     build:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v4
-         - uses: actions/setup-node@v4
-           with:
-             node-version: '22.12'
-             cache: npm
-         - run: npm ci
-         - run: npm run build:pages
-         - uses: actions/upload-pages-artifact@v3
-           with:
-             path: dist
-
-     deploy:
-       needs: build
-       environment:
-         name: github-pages
-         url: ${{ steps.deployment.outputs.page_url }}
-       runs-on: ubuntu-latest
-       steps:
-         - id: deployment
-           uses: actions/deploy-pages@v4
-   ```
-
-   The Node version matches this project's `engines` field
-   (`^20.19.0 || >=22.12.0`); an older Node will fail the Vite build.
-
-4. **Enable Pages.** Repo → **Settings → Pages → Build and deployment →
-   Source: GitHub Actions**. Push to `main`; the first run publishes.
-
-5. **Custom domain (optional).** Settings → Pages → Custom domain, then add
-   the DNS records GitHub shows you. Tick **Enforce HTTPS** once the
-   certificate is issued. Commit a `public/CNAME` file containing just the
-   domain, or Pages will drop the setting on the next deploy.
-
-6. **Set the real URL.** `src/content/siteConfig.js`'s `seo` block still holds
-   a placeholder domain, which is what the canonical link and the social-share
-   card use. Point it at the live URL — otherwise link previews on
-   LinkedIn/WhatsApp resolve to nothing.
-
-### Things worth knowing before you commit to Pages
+### Things worth knowing
 
 - **`public/media/` is 24 MB.** Well inside the 1 GB repo limit and the 100 MB
   per-file limit, but every future media re-optimisation adds another copy to

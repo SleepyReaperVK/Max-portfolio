@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 
-// PLACEHOLDER DOMAIN: the real domain isn't registered yet. Replace this one
-// constant with the live domain when it is — every canonical/OG/Twitter URL
-// this component writes derives from it. Keep in sync with the same
-// placeholder in index.html.
-const SITE_ORIGIN = 'https://maxmasarski.dev'
+// LIVE DOMAIN: the GitHub Pages user site. Every canonical/OG/Twitter URL
+// this component writes derives from this one constant. Keep in sync with the
+// same value in index.html. If a custom domain is added later, both have to
+// change together.
+const SITE_ORIGIN = 'https://sleepyreapervk.github.io'
 
 // Removes the tag when `content` is falsy instead of leaving whatever the
 // previous route (or index.html's static tags) set — otherwise navigating

@@ -4,3 +4,7 @@ media-src
 .playwright-mcp
 *.local
 .DS_Store
+
+# Local backup archives (Max-backup-*.zip is ~765 MB and bundles .git +
+# media-src) - must never reach the public remote.
+*.zip

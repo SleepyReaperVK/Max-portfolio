@@ -1,0 +1,63 @@
+# Builds the site and publishes it to GitHub Pages on every push to main.
+#
+# Pages cannot build a Vite project itself — it only serves static files — so
+# the build happens here and the resulting dist/ is uploaded as the Pages
+# artifact. Nothing built is ever committed to the repo.
+#
+# `build:pages` (not `build`) is deliberate: it runs scripts/pages-postbuild.mjs
+# afterwards, which writes dist/404.html so client-side routes survive a direct
+# hit or refresh, and dist/.nojekyll so Pages doesn't run the output through
+# Jekyll.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; the newest push wins.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Matches the `engines` field in package.json (^20.19.0 || >=22.12.0),
+          # which in turn matches Vite 8's own requirement. An older Node fails
+          # the build outright.
+          node-version: '22.12'
+          cache: npm
+
+      - run: npm ci
+
+      # The theme guard is the only automated check this project has — no test
+      # runner, no linter. Cheap, and it fails the deploy rather than shipping
+      # hardcoded design values.
+      - run: npm run check:theme
+
+      - run: npm run build:pages
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
