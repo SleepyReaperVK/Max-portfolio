@@ -3,7 +3,7 @@ const siteConfig = {
   role: 'Gameplay Programmer (Unreal Engine 5)',
   tagline:
     'Building expressive, systemic action gameplay — melee combat, AI behavior, animation-driven mechanics, and modular ability systems.',
-  email: 'maxer.masarski@gmail.com',
+  email: 'max.masarski@gmail.com',
   location: 'Israel',
   availability: {
     modes: ['Hybrid', 'Remote', 'Relocation'],

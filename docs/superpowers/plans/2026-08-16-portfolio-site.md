@@ -39,7 +39,7 @@ Every task's requirements implicitly include this section.
 |---|---|
 | Name | Max Masarski |
 | Role | Gameplay Programmer (Unreal Engine 5) |
-| Email | maxer.masarski@gmail.com |
+| Email | max.masarski@gmail.com |
 | Location | Israel |
 | Availability | Hybrid · Remote · Open to opportunities abroad and relocation |
 | LinkedIn | https://www.linkedin.com/in/max-masarski-86256b222/ |
@@ -480,7 +480,7 @@ const siteConfig = {
   role: 'Gameplay Programmer (Unreal Engine 5)',
   tagline:
     'Building expressive, systemic action gameplay — melee combat, AI behavior, animation-driven mechanics, and modular ability systems.',
-  email: 'maxer.masarski@gmail.com',
+  email: 'max.masarski@gmail.com',
   location: 'Israel',
   availability: {
     modes: ['Hybrid', 'Remote', 'Relocation'],

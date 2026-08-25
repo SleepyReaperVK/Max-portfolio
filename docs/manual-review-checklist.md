@@ -71,7 +71,7 @@ Open it on your actual phone (same Wi-Fi: re-run preview with `--host` and use t
 
 ## 7. Links and contact
 
-- [ ] Email link opens a mail draft to **maxer.masarski@gmail.com**
+- [ ] Email link opens a mail draft to **max.masarski@gmail.com**
 - [ ] GitHub link goes to the right repo
 - [ ] LinkedIn link is right
 - [ ] ⚠️ **YouTube is a placeholder** — give me the real URL, or say remove it

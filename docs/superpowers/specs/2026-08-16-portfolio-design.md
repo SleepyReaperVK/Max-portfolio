@@ -108,7 +108,7 @@ technical claims, metrics, or features that are not in the source.
 |---|---|
 | Name | Max Masarski |
 | Role | Gameplay Programmer (Unreal Engine 5) |
-| Email | maxer.masarski@gmail.com |
+| Email | max.masarski@gmail.com |
 | Location | Israel |
 | Work preference | Hybrid / remote / **open to opportunities abroad and relocation** |
 | LinkedIn | https://www.linkedin.com/in/max-masarski-86256b222/ |
