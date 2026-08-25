@@ -90,11 +90,19 @@ record) pointing at the server's IP. DNS propagation can take anywhere from
 minutes to a few hours.
 
 Once the domain resolves, update the domain references in the codebase to the
-real domain — they currently point at the GitHub Pages user site
-(`https://sleepyreapervk.github.io`), in three places that must stay in sync:
-`index.html` (canonical + `og:image` + `og:url`), `SITE_ORIGIN` in
-`src/components/common/Seo.jsx`, and the commented sitemap line in
-`public/robots.txt`. Then rebuild and redeploy (steps 1–2 again).
+real domain — they currently point at the GitHub Pages project site
+(`https://sleepyreapervk.github.io/Max-portfolio/`), in three places that must
+stay in sync: `index.html` (canonical + `og:image` + `og:url`), `SITE_ORIGIN`
+in `src/components/common/Seo.jsx`, and the commented sitemap line in
+`public/robots.txt`.
+
+**Also set `base` back to `/` in `vite.config.js`.** A self-hosted domain
+serves from the root, whereas the Pages setup serves from the `/Max-portfolio/`
+subpath — leaving `base` as-is would prefix every asset URL with a folder that
+does not exist on this server. See "The subpath is load-bearing" in
+[`README.md`](README.md) for the full list of things keyed to that value.
+
+Then rebuild and redeploy (steps 1–2 again).
 
 ## 6. Enable HTTPS with certbot
 

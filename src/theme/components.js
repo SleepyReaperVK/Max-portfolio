@@ -4,7 +4,7 @@
 const fontFace = ['cinzel-600', 'cinzel-700', 'inter-400', 'inter-500', 'inter-600'].map((f) => {
   const [family, weight] = f.split('-')
   const fontFamily = family === 'cinzel' ? 'Cinzel' : 'Inter'
-  return `@font-face { font-family: '${fontFamily}'; font-style: normal; font-display: swap; font-weight: ${Number(weight)}; src: url('/fonts/${f}.woff2') format('woff2'); }`
+  return `@font-face { font-family: '${fontFamily}'; font-style: normal; font-display: swap; font-weight: ${Number(weight)}; src: url('${import.meta.env.BASE_URL}fonts/${f}.woff2') format('woff2'); }`
 }).join('\n')
 
 const components = (theme) => ({

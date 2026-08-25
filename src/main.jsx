@@ -10,7 +10,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <BrowserRouter>
+      {/* Must match `base` in vite.config.js — Vite exposes that value as
+          BASE_URL, so the two cannot drift. Without it every in-app route
+          resolves against the domain root and 404s on the Pages subpath. */}
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <App />
       </BrowserRouter>
     </ThemeProvider>

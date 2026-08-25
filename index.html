@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0B0B0D" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
 
     <!--
       The @font-face rules live in the Emotion theme (src/theme/components.js) and
@@ -13,8 +13,8 @@
       then swaps to Cinzel. Preload only the two above-the-fold faces (display h1
       + body); the remaining three are found by normal discovery.
     -->
-    <link rel="preload" href="/fonts/cinzel-700.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="%BASE_URL%fonts/cinzel-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="%BASE_URL%fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
 
     <title>Max Masarski — Gameplay Programmer (Unreal Engine 5)</title>
     <meta
@@ -22,22 +22,24 @@
       content="Portfolio of Max Masarski, a gameplay programmer specializing in melee combat, AI behavior, and modular ability systems in Unreal Engine 5. Featuring Pray For Plagues, a Souls-borne action RPG prototype."
     />
     <!--
-      LIVE DOMAIN: the site is served from the GitHub Pages user site at
-      https://sleepyreapervk.github.io/ (domain root, so the root-absolute
-      asset paths throughout the build resolve as-is). One constant, repeated
-      across the tags in this block. Keep in sync with SITE_ORIGIN in
-      src/components/common/Seo.jsx. If a custom domain is added later, both
-      have to change together.
+      LIVE URL: the site is a GitHub Pages PROJECT site, served from
+      https://sleepyreapervk.github.io/Max-portfolio/ — a subpath, not the
+      domain root. That full URL is repeated across the tags in this block.
+      Keep it in sync with SITE_ORIGIN in src/components/common/Seo.jsx and
+      with `base` in vite.config.js. The favicon and font preloads above use
+      %BASE_URL% (substituted by Vite at build time) rather than a literal
+      path, so they follow `base` on their own. A custom domain or a repo
+      rename changes all three.
     -->
-    <link rel="canonical" href="https://sleepyreapervk.github.io/" />
+    <link rel="canonical" href="https://sleepyreapervk.github.io/Max-portfolio/" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Max Masarski — Gameplay Programmer (Unreal Engine 5)" />
     <meta
       property="og:description"
       content="Portfolio of Max Masarski, a gameplay programmer specializing in melee combat, AI behavior, and modular ability systems in Unreal Engine 5. Featuring Pray For Plagues, a Souls-borne action RPG prototype."
     />
-    <meta property="og:image" content="https://sleepyreapervk.github.io/media/og-cover.jpg" />
-    <meta property="og:url" content="https://sleepyreapervk.github.io/" />
+    <meta property="og:image" content="https://sleepyreapervk.github.io/Max-portfolio/media/og-cover.jpg" />
+    <meta property="og:url" content="https://sleepyreapervk.github.io/Max-portfolio/" />
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>

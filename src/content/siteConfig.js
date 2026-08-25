@@ -18,14 +18,14 @@ const siteConfig = {
   cv: {
     // PLACEHOLDER: set enabled to true once the PDF is dropped at public/cv/max-masarski-cv.pdf
     enabled: false,
-    path: '/cv/max-masarski-cv.pdf',
+    path: `${import.meta.env.BASE_URL}cv/max-masarski-cv.pdf`,
     label: 'Download CV',
   },
   seo: {
     title: 'Max Masarski — Gameplay Programmer (Unreal Engine 5)',
     description:
       'Portfolio of Max Masarski, a gameplay programmer specializing in melee combat, AI behavior, and modular ability systems in Unreal Engine 5. Featuring Pray For Plagues, a Souls-borne action RPG prototype.',
-    ogImage: '/media/og-cover.jpg',
+    ogImage: `${import.meta.env.BASE_URL}media/og-cover.jpg`,
   },
   media: {
     heroBackground: 'hero-background', // the main gameplay screenshot from the Notion landing page

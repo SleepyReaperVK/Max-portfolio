@@ -105,7 +105,7 @@ Two things are intentionally left unfilled, and both are invisible while unfille
 
 Two smaller, honest content gaps (not blockers, but worth knowing):
 
-3. **Canonical/OG domain is the Pages origin, not a custom domain** — `https://sleepyreapervk.github.io` is set in three places that must stay in sync: `index.html` (canonical + `og:image` + `og:url`), `SITE_ORIGIN` in `src/components/common/Seo.jsx`, and the commented sitemap line in `public/robots.txt`. This is correct and live; update all three together if a custom domain is ever added.
+3. **Canonical/OG domain is the Pages origin, not a custom domain** — `https://sleepyreapervk.github.io/Max-portfolio/` is set in three places that must stay in sync: `index.html` (canonical + `og:image` + `og:url`), `SITE_ORIGIN` in `src/components/common/Seo.jsx`, and the commented sitemap line in `public/robots.txt`. This is correct and live; update all three together if a custom domain is ever added (and see the base note in [Hosting on GitHub Pages](#hosting-on-github-pages) — a custom domain also changes `base`).
 4. **`hero-background`, `project-cover`, and `case-study-hero` all resolve to the same physical image** (`/media/hero-background.webp` — see the `IMAGE_ALIASES` map in `scripts/optimize-media.mjs`). A distinct, purpose-shot project-cover image (e.g. a tighter crop or a different in-game moment) would read better on the project card than reusing the hero shot.
 
 ## Deployment
@@ -116,26 +116,38 @@ The site is hosted on **GitHub Pages** and deploys itself: [`.github/workflows/p
 
 ## Hosting on GitHub Pages
 
-**This is the live setup.** The site is a GitHub Pages **user site**, served
-from `https://sleepyreapervk.github.io/` — the domain root.
+**This is the live setup.** The site is a GitHub Pages **project site**, served
+from `https://sleepyreapervk.github.io/Max-portfolio/` — a subpath, not the
+domain root.
 
-### Why the domain root matters
+### The subpath is load-bearing
 
-Every asset in the build is referenced by a **root-absolute path**: `/media/…`
-(all 89 files, from the auto-generated `src/content/mediaManifest.js`),
-`/fonts/*.woff2` (the two preload links in `index.html`), `/favicon.svg`, and
-`/media/og-cover.jpg`. Vite's `base` is left at its default `/`.
+Nothing in the build may reference an asset by a root-absolute path, because
+`/media/...` resolves to `sleepyreapervk.github.io/media/...` — outside the
+site — and 404s. Five things carry the base and **must be changed together**:
 
-| Pages setup | Served at | Works? |
+| # | Where | What it does |
 |---|---|---|
-| **User/org site** — repo named exactly `<username>.github.io` | `https://<username>.github.io/` | ✅ **what this repo uses** |
-| **Any repo + a custom domain** | `https://yourdomain.com/` | ✅ yes, no changes |
-| **Project site** — any other repo name | `https://<username>.github.io/<repo>/` | ❌ every image, font and icon 404s |
+| 1 | `vite.config.js` | `base: '/Max-portfolio/'` — the single source of truth; Vite exposes it as `import.meta.env.BASE_URL` |
+| 2 | `src/main.jsx` | `<BrowserRouter basename={import.meta.env.BASE_URL}>` — without it every in-app route 404s |
+| 3 | `index.html` | `%BASE_URL%favicon.svg` and the two `%BASE_URL%fonts/*.woff2` preloads (Vite substitutes `%BASE_URL%` at build time) |
+| 4 | `src/theme/components.js` | the `@font-face` `src: url(...)` for all five faces |
+| 5 | `scripts/optimize-media.mjs` | emits `src/content/mediaManifest.js` with **relative** paths (`media/x.webp`) plus a `BASE_URL` prefixer, so all 60 entries follow the base |
 
-The repo is therefore named `SleepyReaperVK.github.io`, not something like
-`Max-portfolio`. Renaming it to anything else breaks every asset on the site
-unless the four changes in [Appendix: subpath hosting](#appendix-subpath-hosting)
-land together.
+Two smaller ones ride along: `SITE_ROOT` in `src/components/common/Seo.jsx`
+(canonical and `og:url` need the base folded into the origin), and `cv.path` /
+`seo.ogImage` in `src/content/siteConfig.js`.
+
+The manifest is **generated**, so its paths could not simply be hand-edited —
+`scripts/optimize-media.mjs` had to learn to emit them. Entries are still
+built and cached root-absolute internally and made relative only at write
+time, which keeps an existing `media-src/.optimize-cache.json` valid.
+
+**If the repo is ever renamed**, change `base` in `vite.config.js` to match,
+and update the origin in the three places listed under
+[Known placeholders](#known-placeholders). Renaming the repo to exactly
+`SleepyReaperVK.github.io` would make it a *user site* served from the domain
+root, at which point `base` becomes `/` and items 2–5 all become no-ops.
 
 ### How it deploys
 
@@ -148,19 +160,26 @@ uploads `dist/` as the Pages artifact. Nothing built is committed to the repo.
 `scripts/pages-postbuild.mjs`, which writes:
 
 - **`dist/404.html`** (a copy of `index.html`). Pages has no rewrite rules, so a
-  visitor who loads `/projects/pray-for-plagues` directly, or refreshes on it,
-  would get a 404. Pages serves `404.html` for any unmatched path, which hands
-  control back to the client-side router.
+  visitor who loads `/Max-portfolio/projects/pray-for-plagues` directly, or
+  refreshes on it, would get a 404. Pages serves `404.html` for any unmatched
+  path under the site, which hands control back to the client-side router.
 - **`dist/.nojekyll`**, which stops Pages running the output through Jekyll —
   Jekyll strips files and folders whose names begin with an underscore.
 
 The workflow pins Node `22.12` to match this project's `engines` field
 (`^20.19.0 || >=22.12.0`); an older Node fails the Vite build.
 
+### Verifying a base change locally
+
+`npm run preview` serves the build at the real base
+(`http://localhost:4173/Max-portfolio/`), so it catches subpath breakage that
+`npm run dev` will not. Check that the favicon, both fonts, the media on both
+routes, and a direct hit on the case-study URL all load with no 404s.
+
 ### One-time repo settings
 
-Settings → Pages → Build and deployment → **Source: GitHub Actions**. Without
-this the workflow runs but nothing is published.
+Settings → Pages → Build and deployment → **Source: GitHub Actions**. Already
+done for this repo; without it the workflow runs but nothing is published.
 
 ### Adding a custom domain later
 
@@ -168,12 +187,10 @@ Settings → Pages → Custom domain, then add the DNS records GitHub shows, and
 tick **Enforce HTTPS** once the certificate is issued. Commit a `public/CNAME`
 file containing just the domain, or Pages drops the setting on the next deploy.
 
-A custom domain also serves from root, so no build changes are needed — but
-three files hold the site origin and must be updated together:
-`index.html` (canonical + `og:image` + `og:url`), `SITE_ORIGIN` in
-`src/components/common/Seo.jsx`, and the commented sitemap line in
-`public/robots.txt`. Otherwise link previews on LinkedIn/WhatsApp resolve to
-the old origin.
+A custom domain serves from the **root**, so `base` would go back to `/` — that
+is a build change, not just a DNS one. Update the origin in the three places
+listed under [Known placeholders](#known-placeholders) at the same time, or
+link previews resolve to the old address.
 
 ### Things worth knowing
 
@@ -186,22 +203,3 @@ the old origin.
 - **Public repos only**, unless you have GitHub Pro or a paid org plan.
 - **Soft limits:** 100 GB/month bandwidth, roughly 10 builds/hour.
 
-### Appendix: subpath hosting
-
-Only if the site must live at `https://<username>.github.io/<repo>/`. Four
-changes have to land together:
-
-1. `vite.config.js` — add `base: '/<repo>/'`.
-2. `src/main.jsx` — give the router a matching base:
-   `<BrowserRouter basename={import.meta.env.BASE_URL}>`.
-3. `index.html` — the favicon and the two font preloads are literal
-   `/fonts/…` / `/favicon.svg` strings. Vite rewrites `src`/`href` on tags it
-   processes, but verify all three in `dist/index.html` after building and
-   prefix them with `%BASE_URL%` if they came through unchanged.
-4. `src/content/mediaManifest.js` — this file is **generated** by
-   `scripts/optimize-media.mjs`, so hand-editing it is lost on the next
-   `npm run media:optimize`. Change the generator to emit
-   `import.meta.env.BASE_URL + 'media/…'` (note: no leading slash), or resolve
-   the prefix inside `MediaFrame`. All 89 entries are affected.
-
-Given step 4, root hosting really is the cheaper answer.

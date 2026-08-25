@@ -1,10 +1,17 @@
 import { useEffect } from 'react'
 
-// LIVE DOMAIN: the GitHub Pages user site. Every canonical/OG/Twitter URL
-// this component writes derives from this one constant. Keep in sync with the
-// same value in index.html. If a custom domain is added later, both have to
-// change together.
+// Origin only, WITHOUT the app base — SITE_ROOT below adds that. Every
+// canonical/OG/Twitter URL this component writes derives from these two. Keep
+// in sync with the URL in index.html; a custom domain or a repo rename changes
+// both, plus `base` in vite.config.js.
 const SITE_ORIGIN = 'https://sleepyreapervk.github.io'
+
+// The app is served from a GitHub Pages project subpath, so canonical and
+// og:url need the base folded in. BASE_URL carries a trailing slash and `path`
+// carries a leading one, hence the trim — otherwise every URL doubles it.
+// `image` is NOT built from this: manifest paths already include BASE_URL, so
+// they only need the bare origin.
+const SITE_ROOT = `${SITE_ORIGIN}${import.meta.env.BASE_URL}`.replace(/\/$/, '')
 
 // Removes the tag when `content` is falsy instead of leaving whatever the
 // previous route (or index.html's static tags) set — otherwise navigating
@@ -57,7 +64,7 @@ export default function Seo({
   useEffect(() => {
     if (title) document.title = title
 
-    const url = `${SITE_ORIGIN}${path}`
+    const url = `${SITE_ROOT}${path}`
     const absoluteImage = image ? `${SITE_ORIGIN}${image}` : undefined
 
     upsertMeta('name', 'description', description)

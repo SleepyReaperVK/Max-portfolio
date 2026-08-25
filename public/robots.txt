@@ -3,4 +3,4 @@ Allow: /
 
 # No sitemap.xml is generated for this two-route site; the line below is kept
 # ready for when one is.
-# Sitemap: https://sleepyreapervk.github.io/sitemap.xml
+# Sitemap: https://sleepyreapervk.github.io/Max-portfolio/sitemap.xml
