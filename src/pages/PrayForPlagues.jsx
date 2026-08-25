@@ -11,6 +11,7 @@ import Seo from '@/components/common/Seo'
 import AnimatedReveal from '@/components/common/AnimatedReveal'
 import CaseStudyHero from '@/components/caseStudy/CaseStudyHero'
 import AtAGlance from '@/components/caseStudy/AtAGlance'
+import GameplayVideo from '@/components/caseStudy/GameplayVideo'
 import SystemNav from '@/components/caseStudy/SystemNav'
 import SystemBreakdown from '@/components/caseStudy/SystemBreakdown'
 import Lightbox from '@/components/caseStudy/Lightbox'
@@ -75,6 +76,10 @@ export default function PrayForPlagues() {
             </Typography>
           ))}
         </Box>
+      </Section>
+
+      <Section id="gameplay" eyebrow="Gameplay" title="Video Gameplay">
+        <GameplayVideo gameplay={prayForPlagues.gameplay} />
       </Section>
 
       <Section id="contributions" eyebrow="My Role" title="Role & Contributions">

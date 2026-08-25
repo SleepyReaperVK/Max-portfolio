@@ -22,6 +22,18 @@ const prayForPlagues = {
     'This project is a Souls-borne inspired action RPG built around deliberate combat, punishing enemy encounters, and systemic gameplay interactions. The goal is to recreate the core pillars of the genre — weighty animations, precise timing windows, readable telegraphs, and intelligent enemy behavior — while building the underlying systems in a clean, extensible engineering architecture.',
     'The game is developed in Unreal Engine 5, using a combination of C++, Blueprints and Blender, where its foundation is heavily built around GAS and its attribute system.',
   ],
+  // The "Video Gameplay" block from the Notion Project Overview page. The
+  // facade poster deliberately reuses a self-hosted gameplay clip instead of
+  // YouTube's thumbnail — see GameplayVideo.jsx for why.
+  gameplay: {
+    youtubeId: 'SOW6vvANuUc',
+    url: 'https://www.youtube.com/watch?v=SOW6vvANuUc',
+    title: 'Pray-For-Plagues Project Gameplay (Dark Knight Boss Fight)',
+    poster: {
+      key: 'ai-boss-phase-1',
+      alt: 'Play the Pray For Plagues gameplay video — the Dark Knight boss fight',
+    },
+  },
   contributions: [
     { area: 'Gameplay Engineering', items: ['Interaction System', 'Inventory System', 'Dynamic Footstep System', 'Object Destruction System'] },
     { area: 'AI Engineering', items: ['AI Attack Manager', 'Telegraphing System', 'AOE & regular damage', 'Boss behavior logic', 'AI hit reactions', 'Close- and long-range enemies', 'Built on EQS & Behavior Trees'] },
