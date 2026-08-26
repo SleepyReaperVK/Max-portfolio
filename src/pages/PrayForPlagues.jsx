@@ -5,6 +5,7 @@ import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import Section from '@/components/common/Section'
 import Seo from '@/components/common/Seo'
@@ -13,6 +14,7 @@ import CaseStudyHero from '@/components/caseStudy/CaseStudyHero'
 import AtAGlance from '@/components/caseStudy/AtAGlance'
 import GameplayVideo from '@/components/caseStudy/GameplayVideo'
 import SystemNav from '@/components/caseStudy/SystemNav'
+import SystemDotRail from '@/components/caseStudy/SystemDotRail'
 import SystemBreakdown from '@/components/caseStudy/SystemBreakdown'
 import Lightbox from '@/components/caseStudy/Lightbox'
 import prayForPlagues from '@/content/prayForPlagues'
@@ -32,6 +34,9 @@ const ogMedia = mediaManifest[siteConfig.media.ogCover]
 
 export default function PrayForPlagues() {
   const theme = useTheme()
+  // Exactly one of the two section navs is mounted, so only one
+  // IntersectionObserver ever runs (see useActiveSection).
+  const hasSideNav = useMediaQuery(theme.breakpoints.up('lg'))
   const [lightbox, setLightbox] = useState({ items: [], index: 0, open: false })
 
   const handleOpenMedia = (items, index) => {
@@ -105,15 +110,22 @@ export default function PrayForPlagues() {
         </Grid>
       </Section>
 
+      {/* Before the breakdowns in the DOM so it is an early tab stop rather
+          than one reached after all six sections. */}
+      {hasSideNav ? null : <SystemDotRail systems={prayForPlagues.systems} />}
+
       <Box component="section" id="systems" aria-label="System breakdowns" sx={{ py: theme.custom.section.paddingBlock }}>
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 4, lg: 6 }}>
-            {/* Hide the grid cell itself (not just SystemNav's inner content) below
-                `lg` — hiding only the child would still leave an empty cell
-                contributing a `spacing` gap above the first system. */}
-            <Grid size={{ xs: 12, lg: 3 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
-              <SystemNav systems={prayForPlagues.systems} />
-            </Grid>
+            {/* Drop the grid cell entirely below `lg` rather than hiding it: an
+                empty cell would still contribute a `spacing` gap above the
+                first system, and `position: fixed` does not escape a
+                `display: none` ancestor, which the dot rail needs. */}
+            {hasSideNav ? (
+              <Grid size={{ xs: 12, lg: 3 }}>
+                <SystemNav systems={prayForPlagues.systems} />
+              </Grid>
+            ) : null}
             <Grid size={{ xs: 12, lg: 9 }} sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
               {prayForPlagues.systems.map((system, index) => (
                 <SystemBreakdown key={system.id} system={system} index={index} onOpenMedia={handleOpenMedia} />
