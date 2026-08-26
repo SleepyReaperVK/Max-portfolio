@@ -3,6 +3,9 @@ const motion = {
   base: 400,
   slow: 700,
   easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+  // The same curve as `easing`, as control points — framer-motion's `animate`
+  // takes the points, not a cubic-bezier() string.
+  easingPoints: [0.16, 1, 0.3, 1],
 }
 
 // framer-motion variants — the ONLY scroll-reveal definition in the project

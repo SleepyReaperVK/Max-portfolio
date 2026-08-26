@@ -4,12 +4,15 @@ import Box from '@mui/material/Box'
 import { useTheme } from '@mui/material/styles'
 import ScrollProgressBar from '@/components/common/ScrollProgressBar'
 import NavBar from './NavBar'
+import useSmoothAnchorScroll from './useSmoothAnchorScroll'
 import Footer from './Footer'
 
 export default function PageLayout({ navLinks, siteConfig, children }) {
   const theme = useTheme()
   const { pathname, hash } = useLocation()
   const navbarHeight = theme.custom.navbarHeight
+
+  useSmoothAnchorScroll()
 
   useEffect(() => {
     if (hash) {
