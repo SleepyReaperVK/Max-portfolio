@@ -2,23 +2,23 @@ const interaction = {
   id: 'interaction',
   title: 'Interaction System',
   summary:
-    'A modular, extensible framework for interacting with world objects — pickups, doors, chests, and notes — built on a unified interaction interface so new interactable types require no changes to core logic.',
+    'A modular framework for interacting with world objects: pickups, doors, chests and notes. Everything runs through one interaction interface, so a new interactable type needs no changes to core logic.',
   sections: [
     {
       heading: 'Overview',
       paragraphs: [
-        'The interaction system is built as a modular, extensible framework that allows the player to interact with a wide range of world objects — from simple pickups to complex inspectable items and actionable environment elements such as doors and chests. The system is designed to be lightweight, data-driven, and easy to expand without modifying core logic.',
-        'At its core, the system uses a unified interaction interface that all interactable objects implement. When the player enters an interaction zone or targets an object, the system checks for this interface and determines the appropriate interaction type. This allows the same player logic to support multiple categories of interactions while keeping object-specific behavior isolated and clean.',
-        'Animation for opening doors and chests, as well as ladder climbing, is planned for a future implementation.',
+        'The interaction system covers everything the player can touch in the world, from a simple pickup to an inspectable item to environment pieces like doors and chests. It stays lightweight and data-driven, and adding to it does not mean touching core logic.',
+        'Every interactable implements one shared interaction interface. When the player enters an interaction zone or targets an object, the system checks for that interface and works out which interaction applies. One piece of player logic then handles every category, and object-specific behavior stays where it belongs.',
+        'Animations for opening doors and chests, and for climbing ladders, are still to come.',
       ],
       media: [],
     },
     {
       heading: 'World Interaction',
       paragraphs: [
-        'A showcase of the player interacting with different types of objects within the world: picking up items, opening doors, opening locked doors, inspecting a note, and opening a chest.',
-        'The door requests an item labeled under a specified tag to be present within the player’s inventory in order to be operated.',
-        'Chests can be locked as doors are and require certain items to open. In a future implementation, some chests might require other conditions to unlock, such as currency.',
+        'The player interacting with the different object types: picking up items, opening doors, opening locked doors, reading a note and opening a chest.',
+        'A locked door checks the player’s inventory for an item under a specified tag before it will open.',
+        'Chests can be locked the same way and need the right item to open. Later on some may want other conditions instead, currency for example.',
       ],
       media: [
         { key: 'interaction-pickup-item', alt: 'Player picking up an item in the world', caption: 'Picking Up Items' },
@@ -29,9 +29,9 @@ const interaction = {
       ],
     },
     {
-      heading: 'Player Interaction depending on his state',
+      heading: 'Interaction And Player State',
       paragraphs: [
-        'As has been showcased in the combat breakdown section, the player can equip different types of weapons, which changes his state. Along with that, his pickup animations adapt with the change: depending on the equipped item and the item’s elevation, different animations will be played. Currently this is supported only for picking up items.',
+        'As covered in the combat breakdown, equipping a different weapon type changes the player’s state, and the pickup animations follow it. The animation played depends on what is equipped and how high the item sits. Right now this only applies to picking items up.',
       ],
       media: [
         { key: 'interaction-pickup-heavy-weapon', alt: 'Player picking up an item while equipped with a heavy weapon, using the matching pickup animation', caption: 'Player Item Pickup While Equipped With Heavy Weapon' },
@@ -40,8 +40,8 @@ const interaction = {
     {
       heading: 'Using Items',
       paragraphs: [
-        'Currently, item usability is not supported by the GAS system within this project; it will be implemented down the line.',
-        'Overall, the interaction system provides a flexible foundation for world interactivity, supporting both simple and complex objects while maintaining clarity, modularity, and ease of expansion.',
+        'Using items is not wired into GAS in this project yet. That comes later.',
+        'On the whole it is a flexible base for world interactivity that handles simple and complex objects without getting muddy or hard to extend.',
       ],
       media: [],
     },

@@ -2,33 +2,33 @@ const ai = {
   id: 'ai',
   title: 'AI System',
   summary:
-    'A modular, behavior-driven AI architecture — Behavior Trees, EQS positioning, motion-warped attacks, and perception-based awareness — built to deliver readable, reactive, and challenging Souls-borne encounters.',
+    'A modular, behavior-driven AI architecture: Behavior Trees, EQS positioning, motion-warped attacks and perception-based awareness, built for readable, reactive Souls-borne encounters.',
   sections: [
     {
       heading: 'Overview',
       paragraphs: [
-        'The AI system is built around a modular, behavior-driven architecture designed to support readable, reactive, and challenging encounters in a Souls-borne style combat environment. Each enemy uses a combination of Behavior Trees, custom attack logic, and animation-driven telegraphs to ensure that combat feels fair, intentional, and mechanically consistent with the player’s moveset.',
-        'The system is designed to deliver highly challenging, behavior-rich encounters that demand precise decision-making from the player. Each enemy type is built around a distinct behavioral identity, ensuring that combat remains varied, readable, and strategically engaging. The overarching goal is to create AI that feels smart, reactive, and dangerous — capable of punishing mistakes through motion-warped attacks, area-of-effect abilities, and powerful buffs that dramatically increase damage output.',
+        'The AI is modular and behavior-driven, aimed at encounters the player can read and react to. Each enemy combines Behavior Trees, custom attack logic and animation-driven telegraphs, so fights stay fair and mechanically consistent with the player’s own moveset.',
+        'Encounters are meant to be hard and to demand real decisions. Every enemy type has its own behavioral identity, which keeps fights varied without making them unreadable. What I was after is AI that feels smart, reactive and genuinely dangerous, able to punish a mistake with a motion-warped attack, an AOE ability, or a buff that spikes its damage.',
       ],
       media: [],
     },
     {
       heading: 'Design Goals',
       paragraphs: [
-        'A core design pillar is behavior differentiation. Bosses and elite enemies use advanced logic, including passive-aggressive threat evaluation, dynamic strafing, and EQS-driven positioning. For example, the Dark Knight boss maintains distance when the player disengages, repositioning intelligently rather than blindly rushing. This creates encounters where spacing, timing, and situational awareness become critical.',
-        'Standard enemies follow simpler, more aggressive patterns, using straightforward 1–2 hit combos and direct rush behavior. Their "dumb" aggression contrasts with the more tactical bosses, creating a layered ecosystem of enemy types that each challenge the player in different ways. Ranged enemies maintain distance and rely on projectile attacks, forcing the player to manage spacing and prioritize threats.',
-        'Another design goal that is yet to be made is the Token Exchange System, where when multiple enemies are engaging the player they will request a token from the player to allow them to attack, allowing a group of enemies to be more coordinated and at the same time allow the player to "breathe" in between enemy rushes.',
+        'The main pillar is behavior differentiation. Bosses and elites run advanced logic: passive-aggressive threat evaluation, dynamic strafing and EQS-driven positioning. The Dark Knight boss, for example, holds his distance when the player disengages and repositions instead of charging in blind. That turns spacing, timing and awareness into the actual fight.',
+        'Standard enemies are simpler and more aggressive: 1–2 hit combos and a straight rush. That "dumb" aggression is deliberate, since it plays off the tactical bosses and gives the roster some range. Ranged enemies hold their distance and throw projectiles, which forces the player to manage spacing and pick targets.',
+        'Still on the list is a Token Exchange System. When several enemies are on the player, each would have to request a token before it can attack. That makes a group read as coordinated and gives the player room to breathe between rushes.',
       ],
       media: [],
     },
     {
       heading: 'Behavior Trees & State Management',
       paragraphs: [
-        'The showcase focuses more on a boss character’s mechanics since he’s more advanced and has more abilities, unlike the regular enemies. Naturally all abilities can be applied to any enemy easily within their Data Asset respectively.',
-        'All enemies operate through a unified Behavior Tree structure that governs high-level decision-making: patrolling, engaging, repositioning, attacking, and retreating. The Behavior Tree communicates with custom C++/Blueprint tasks that evaluate distance to the player (run through a Behavior Tree service), line-of-sight using AI Perception, cooldowns, available attack types, and EQS positioning results.',
-        'For enemy bosses exclusively, another check is performed additionally to distance, which checks whether the boss’s health bar has been drawn successfully.',
-        'Advanced enemies (especially bosses) use EQS (Environment Query System) to evaluate optimal combat positions. If the player maintains distance, the AI won’t engage right away and will strafe to simulate "observe" behavior. Only when a player attempts to engage will the AI retaliate. If the player decides to keep the distance, the AI will eventually launch a "close in" attack.',
-        'Regular enemies have a "Patrol State" where they will walk around a given area and, once the player has been seen, engage in battle. Patrol works by giving a point for the AI to investigate; multiple points can also be specified, and patrol routes can be sequential or randomized. AI relies on its dominant sense to spot enemies — in this example, the AI’s dominant sense is vision, so when sight is lost, the enemy returns back to the patrol state.',
+        'This breakdown leans on a boss, since he has more going on than the regular enemies. Any of these abilities can be handed to any enemy through its own Data Asset.',
+        'Every enemy runs on one shared Behavior Tree structure covering the high-level decisions: patrol, engage, reposition, attack, retreat. The tree talks to custom C++/Blueprint tasks that check distance to the player (through a Behavior Tree service), line of sight via AI Perception, cooldowns, which attacks are available, and EQS positioning results.',
+        'Bosses get one extra check on top of distance: whether their health bar has actually been drawn.',
+        'Advanced enemies, bosses above all, use EQS (Environment Query System) to find good combat positions. If the player keeps their distance, the AI holds off and strafes, which reads as observing. It hits back once the player commits. Keep stalling and it will eventually open with a closing attack of its own.',
+        'Regular enemies have a patrol state: they walk a given area and engage once they see the player. Patrol runs off investigation points, and you can hand an enemy several of them, sequential or randomized. Detection uses the AI’s dominant sense, which here is vision, so once it loses sight the enemy goes back to patrolling.',
       ],
       media: [
         { key: 'ai-boss-data-asset', alt: 'Dark Knight enemy boss Data Asset defining its abilities and configuration', caption: 'Dark Knight Enemy Boss Data-Asset' },
@@ -42,8 +42,8 @@ const ai = {
     {
       heading: 'Detour Crowd Avoidance System',
       paragraphs: [
-        'The Detour Crowd Avoidance System provides dynamic, real-time navigation adjustments that allow AI characters to move naturally through crowded or narrow environments without colliding or clustering. It extends the standard navigation system with avoidance heuristics that evaluate nearby agents and adjust movement vectors to maintain spacing, preserve formation integrity, and prevent bottlenecking during combat or patrol behavior.',
-        'Each AI controller defines its own crowd quality level, determining how aggressively the agent avoids others and how much CPU time is allocated to its avoidance calculations. High-tier enemies (such as bosses or elite units) use higher quality settings to ensure smooth, intentional movement during complex repositioning or EQS-driven strafing. Standard enemies use lower quality settings to maintain performance while still benefiting from basic avoidance.',
+        'Detour Crowd Avoidance adjusts navigation in real time so AI can move through tight or crowded spaces without colliding or bunching up. It layers avoidance heuristics on top of standard navigation, reading nearby agents and nudging movement vectors to hold spacing and stop enemies jamming a doorway mid-fight or mid-patrol.',
+        'Each AI controller sets its own crowd quality, which decides how hard the agent avoids others and how much CPU goes into those calculations. Bosses and elites run high quality so their repositioning and EQS strafing stay smooth. Standard enemies run low quality, which still gets them basic avoidance without the cost.',
       ],
       media: [
         { key: 'ai-crowd-avoidance', alt: 'AI agents dynamically avoiding each other via the Detour Crowd Avoidance System', caption: 'Detour Crowd Avoidance System in action' },
@@ -52,9 +52,9 @@ const ai = {
     {
       heading: 'Attack Manager & Motion Warping',
       paragraphs: [
-        'The Attack Manager is a centralized decision-making component responsible for selecting, validating, and chaining enemy attacks. It evaluates multiple conditions — probability weights, distance requirements, and gameplay tag prerequisites — to determine which attack the AI should execute next. The Attack Manager component resides on the enemy, where Data Assets are assigned to it.',
-        'Attack montages contain Anim Notify State transition windows, which allow the AI to chain attacks fluidly. When the transition window is active, the Attack Manager evaluates the next valid attack and commits to it, creating seamless multi-hit combos without breaking animation flow. This logic can be applied to all enemy types and be adjusted as the creator decides to; in this showcase the enemy is a boss-type character that utilizes all specified techniques.',
-        'Boss fights have a 2-phase structure, where upon transitioning to the next phase, the boss changes its behavior, attack pattern, and gains new abilities. In phase 1, the enemy launches close-range attacks that can be parried, with some attacks using motion warping for a more challenging encounter. Once the enemy’s health has dropped below a certain amount, phase 2 begins. When phase 2 begins, the enemy gains unparryable attacks that have an AOE damage application effect extending along with the VFX, and additionally gains the ability to launch projectiles at the player.',
+        'The Attack Manager is the one component that picks, validates and chains enemy attacks. It weighs probability, distance requirements and gameplay tag prerequisites to decide what the AI throws next. It lives on the enemy itself, with Data Assets assigned to it.',
+        'Attack montages carry Anim Notify State transition windows so attacks can chain cleanly. While a window is open, the Attack Manager picks the next valid attack and commits, which gives multi-hit combos that never break animation flow. Any enemy type can use this and tune it however you like; the enemy here is a boss, so he uses all of it.',
+        'Boss fights run in two phases. On the transition the boss changes behavior, changes attack pattern and picks up new abilities. Phase 1 is close-range attacks the player can parry, some of them motion-warped to make them harder to slip. Drop his health past a threshold and phase 2 starts: unparryable attacks whose AOE damage extends with the VFX, plus projectiles.',
       ],
       media: [
         { key: 'ai-attack-manager-config', alt: 'Attack montage notifies driving combo windows, motion warping, and weapon collision toggling', caption: 'Attack montage notify setup' },
@@ -67,17 +67,17 @@ const ai = {
     {
       heading: 'Attack Types & Ability Integration',
       paragraphs: [
-        'Enemies support multiple attack categories: melee combos (1–2 hit for simple enemies, complex chains for bosses), AOE abilities (ground slams, shockwaves, magic bursts), ranged projectiles (long-range units), buffs (damage amplification, speed boosts, phase transitions), and enemy summoning. These abilities are data-driven and integrated into the same attack pipeline used by the player, ensuring systemic consistency.',
+        'Enemies cover several attack categories: melee combos (1–2 hits for simple enemies, longer chains for bosses), AOE abilities (ground slams, shockwaves, magic bursts), ranged projectiles, buffs (damage amplification, speed boosts, phase transitions) and summoning. All of it is data-driven and runs through the same attack pipeline the player uses.',
       ],
       media: [],
     },
     {
       heading: 'AI Debugging Tools',
       paragraphs: [
-        'The AI System relies on a combination of built-in Unreal debugging tools and a custom EQS visualization utility to support rapid iteration, behavior tuning, and encounter balancing. These tools allow designers and programmers to observe AI perception, navigation, ability activation, and decision-making in real time, ensuring that complex behaviors remain readable and functionally correct.',
-        'Unreal’s standard debugging suite provides immediate visibility into core systems: AI Perception Debugging displays sight, hearing, and stimulus events, making it easy to verify detection ranges, line-of-sight checks, and transitions between patrol and combat states. Detour Crowd Avoidance Debugging shows avoidance radii, agent priorities, and movement adjustments, allowing fine-tuning of crowd quality settings and filter groups for different enemy archetypes. GAS Debugging reveals active abilities, gameplay tags, cooldowns, and state transitions — essential for verifying buff-based attacks, special ability unlocks, and phase-specific behaviors. General AI Debugging provides visualization for navigation paths, behavior tree execution, EQS queries, and decision flow, helping validate attack selection, movement logic, and state changes.',
-        'In addition to these built-in tools, a custom EQS Test Pawn was developed to streamline EQS debugging. This pawn can be spawned relative to the player’s capsule and used to run EQS queries in isolation, without needing to play in editor or trigger full AI behavior.',
-        'In conclusion, the AI System forms a cohesive, data-driven foundation for delivering challenging, readable, and behaviorally diverse encounters. Through modular behavior trees, EQS-driven positioning, motion-warped attacks, perception-based awareness, and crowd-avoidance navigation, enemies behave intelligently and consistently across all archetypes — from simple rushers to complex multi-phase bosses.',
+        'Iterating on this needed tooling, so the AI leans on Unreal’s built-in debugging plus a custom EQS visualization utility. Between them you can watch perception, navigation, ability activation and decision-making live, which is the only practical way to tell whether a complex behavior is actually doing what you think.',
+        'Unreal’s standard suite covers most of it. AI Perception Debugging draws sight, hearing and stimulus events, which is how I check detection ranges, line-of-sight and the patrol-to-combat transition. Detour Crowd Avoidance Debugging shows avoidance radii, agent priorities and movement adjustments, so crowd quality and filter groups can be tuned per archetype. GAS Debugging exposes active abilities, gameplay tags, cooldowns and state transitions, which is how buff attacks, ability unlocks and phase behavior get verified. General AI Debugging draws navigation paths, behavior tree execution, EQS queries and decision flow for checking attack selection, movement and state changes.',
+        'On top of that I built a custom EQS Test Pawn. It spawns relative to the player’s capsule and runs EQS queries on their own, with no need to play in editor or drive a full AI behavior to see the result.',
+        'Taken together it is a data-driven foundation for encounters that are hard, readable and varied. Modular behavior trees, EQS positioning, motion-warped attacks, perception-based awareness and crowd-avoidance navigation give consistent behavior across the whole roster, from a simple rusher to a multi-phase boss.',
       ],
       media: [],
     },

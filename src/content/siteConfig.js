@@ -2,7 +2,7 @@ const siteConfig = {
   name: 'Max Masarski',
   role: 'Gameplay Programmer (Unreal Engine 5)',
   tagline:
-    'Building expressive, systemic action gameplay — melee combat, AI behavior, animation-driven mechanics, and modular ability systems.',
+    'Systemic action gameplay: melee combat, AI behavior, animation-driven mechanics and modular ability systems.',
   email: 'max.masarski@gmail.com',
   location: 'Israel',
   availability: {
@@ -24,7 +24,7 @@ const siteConfig = {
   seo: {
     title: 'Max Masarski — Gameplay Programmer (Unreal Engine 5)',
     description:
-      'Portfolio of Max Masarski, a gameplay programmer specializing in melee combat, AI behavior, and modular ability systems in Unreal Engine 5. Featuring Pray For Plagues, a Souls-borne action RPG prototype.',
+      'Portfolio of Max Masarski, a gameplay programmer working on melee combat, AI behavior and modular ability systems in Unreal Engine 5. Includes Pray For Plagues, a Souls-borne action RPG prototype.',
     ogImage: `${import.meta.env.BASE_URL}media/og-cover.jpg`,
   },
   media: {

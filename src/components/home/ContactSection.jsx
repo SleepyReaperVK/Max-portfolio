@@ -28,7 +28,7 @@ export default function ContactSection({ email, links, cv }) {
             textAlign: 'center',
           }}
         >
-          Reach out about gameplay programming roles, collaborations, or the projects above — I read every message.
+          Get in touch about gameplay programming roles, collaborations, or anything above. I read every message.
         </Typography>
       </AnimatedReveal>
 

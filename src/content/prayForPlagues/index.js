@@ -19,8 +19,8 @@ const prayForPlagues = {
     { label: 'Started', value: '2024' },
   ],
   summary: [
-    'This project is a Souls-borne inspired action RPG built around deliberate combat, punishing enemy encounters, and systemic gameplay interactions. The goal is to recreate the core pillars of the genre — weighty animations, precise timing windows, readable telegraphs, and intelligent enemy behavior — while building the underlying systems in a clean, extensible engineering architecture.',
-    'The game is developed in Unreal Engine 5, using a combination of C++, Blueprints and Blender, where its foundation is heavily built around GAS and its attribute system.',
+    'A Souls-borne action RPG built around deliberate combat, punishing encounters and systemic gameplay interactions. I wanted the core pillars of the genre: weighty animations, tight timing windows, readable telegraphs and enemies that actually think. And I wanted the systems underneath to stay clean enough to keep extending.',
+    'It runs on Unreal Engine 5, built with C++, Blueprints and Blender, and leans heavily on GAS and its attribute system as a foundation.',
   ],
   // The "Video Gameplay" block from the Notion Project Overview page. The
   // facade poster deliberately reuses a self-hosted gameplay clip instead of

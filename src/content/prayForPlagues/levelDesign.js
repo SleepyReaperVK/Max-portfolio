@@ -2,20 +2,20 @@ const levelDesign = {
   id: 'level-design',
   title: 'Level Design',
   summary:
-    'A multi-floor dungeon complex built around looping pathways, unlockable shortcuts, and escalating encounter pacing — inspired by Dark Souls traversal, Bloodborne’s Victorian setting, and Devil May Cry’s gothic environments.',
+    'A multi-floor dungeon built on looping pathways, unlockable shortcuts and escalating encounter pacing, drawing on Dark Souls traversal, Bloodborne’s Victorian setting and Devil May Cry’s gothic environments.',
   sections: [
     {
       heading: 'Overview',
       paragraphs: [
-        'The level design is structured around a multi-layered dungeon complex that emphasizes exploration, spatial mastery, and deliberate encounter pacing. The dungeon consists of three floors, each introducing new enemy types, environmental challenges, and traversal opportunities. The top floor houses two boss arenas, while a massive sealed gate leads players downward to the final boss chamber located on the ground floor, creating a clear sense of progression and escalating tension.',
-        'Disclaimer: the level is not fully complete — the final boss section will be made later down the line.',
+        'The level is a layered dungeon complex built for exploration, learning the space, and paced encounters. Three floors, each bringing new enemy types, environmental problems and routes. The top floor holds two boss arenas, and a huge sealed gate takes the player back down to the final boss chamber on the ground floor.',
+        'Note: the level is not finished. The final boss section is still to be built.',
       ],
       media: [],
     },
     {
       heading: 'Prison Section',
       paragraphs: [
-        'The dungeon connects seamlessly to an adjacent prison section, which serves as an early-game area and a natural extension of the dungeon’s narrative and spatial flow.',
+        'The dungeon runs straight into an adjacent prison section, which acts as the early-game area and a natural extension of the space.',
       ],
       media: [
         { key: 'level-design-prison-section', alt: 'Top-down navmesh view of the prison section, showing cyan AI navigation-mesh geometry and red AI-perception markers across the layout', caption: 'Prison Section — Navmesh / AI Pathing Coverage' },
@@ -24,10 +24,10 @@ const levelDesign = {
     {
       heading: 'Dungeon Section',
       paragraphs: [
-        'Inspired by classic Dark Souls design principles, the dungeon incorporates looping pathways and unlockable shortcuts that allow players to backtrack efficiently and create mental maps of the environment. These shortcuts reward exploration and reduce friction during repeated traversal, especially after boss defeats or difficult encounters.',
-        'The level itself is heavily inspired by Bloodborne’s Victorian era theme and Devil May Cry’s gothic environment, giving players an eerie and chilling experience, where nowhere is safe as death lurks in the shadows.',
-        'The dungeon spans three floors. The first floor includes the first dungeon entrance, the main hall, the Idol of Death (an upgrade statue), a tunnel variant, and the second dungeon entrance. The second floor includes its own entrance and a balcony on the left wing. The third floor includes a bridge connecting to the right wing, a prayer room, and the entrance to a two-quarter chamber.',
-        'Overall, the dungeon’s design combines vertical progression, interconnected pathways, environmental storytelling, and strategic encounter placement to deliver a cohesive, challenging, and exploration-driven experience that aligns with the game’s core combat philosophy.',
+        'Following classic Dark Souls layout thinking, the dungeon uses looping pathways and unlockable shortcuts so players can backtrack quickly and build a mental map of the place. The shortcuts pay off exploration and take the sting out of walking the same route again after a boss or a rough fight.',
+        'Visually it leans hard on Bloodborne’s Victorian era and Devil May Cry’s gothic environments. The idea is that nowhere in it feels safe.',
+        'The three floors break down like this. First floor: the first dungeon entrance, the main hall, the Idol of Death (an upgrade statue), a tunnel variant, and the second dungeon entrance. Second floor: its own entrance and a balcony on the left wing. Third floor: a bridge across to the right wing, a prayer room, and the entrance to a two-quarter chamber.',
+        'Between the vertical progression, the interconnected routes, the environmental storytelling and where the fights are placed, the dungeon holds together as one space to explore, and it asks the same things of the player that the combat does.',
       ],
       media: [
         { key: 'level-design-first-floor-entrance', alt: 'First floor dungeon entrance', caption: 'First Floor — First Dungeon Entrance' },

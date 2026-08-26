@@ -2,20 +2,20 @@ const audio = {
   id: 'audio',
   title: 'Audio & Feedback Systems',
   summary:
-    'Dynamic audio and visual feedback systems — a reactive boss soundtrack manager, surface-aware footsteps, and combat hit VFX/SFX — that reinforce clarity, impact, and emotional pacing across combat and exploration.',
+    'Audio and visual feedback: a reactive boss soundtrack manager, surface-aware footsteps and combat hit VFX/SFX, all working on clarity, impact and pacing in combat and exploration.',
   sections: [
     {
       heading: 'Overview',
       paragraphs: [
-        'The Audio & Feedback Systems are designed to reinforce clarity, impact, and emotional pacing throughout combat and exploration. These systems combine dynamic audio behavior with responsive visual feedback to ensure that every action — whether a footstep, a weapon strike, or a boss phase transition — feels grounded and intentional. Each sound effect is followed with optional visual effects or decals that are applied on the player, enemy, or world.',
-        'In order to showcase all mentioned systems, the full gameplay video demonstrates all of them coming into play together.',
+        'These systems carry clarity, impact and pacing through combat and exploration. Audio behavior and visual feedback are built together so a footstep, a weapon strike or a boss phase change all land as deliberate. Sounds can be paired with VFX or decals applied to the player, the enemy or the world.',
+        'The full gameplay video is the best place to see all of these working at once.',
       ],
       media: [],
     },
     {
       heading: 'Dynamic Boss Soundtrack Manager',
       paragraphs: [
-        'A key component is the Dynamic Soundtrack Manager, which controls music transitions during boss encounters. The manager monitors boss health thresholds and phase changes, seamlessly shifting between soundtrack layers to match the intensity of the fight. This creates a reactive audio experience where music escalates as the encounter becomes more dangerous, enhancing tension and player immersion.',
+        'The Dynamic Soundtrack Manager handles music transitions during boss fights. It watches boss health thresholds and phase changes and moves between soundtrack layers to match how the fight is going, so the music climbs as the encounter gets more dangerous.',
       ],
       media: [
         { key: 'audio-boss-soundtrack-manager', alt: 'BP_DarkKnight_MusicManager blueprint showing Phase1Audio, Phase2Audio, and TransitionToPhase2Audio properties', caption: 'Dynamic Boss Soundtrack Manager' },
@@ -24,7 +24,7 @@ const audio = {
     {
       heading: 'Dynamic Footstep System',
       paragraphs: [
-        'Moment-to-moment feedback is supported by the Dynamic Footstep System, which adjusts sound effects, particle effects, and decals based on the surface the player is walking on. Each material type — stone, dirt, metal, water — triggers its own audio and visual response, making movement feel connected to the environment and improving spatial awareness.',
+        'The Dynamic Footstep System handles moment-to-moment feedback, swapping sounds, particles and decals based on the surface underfoot. Stone, dirt, metal and water each get their own audio and visual response, which ties movement to the environment and helps the player place themselves in it.',
       ],
       media: [
         { key: 'audio-dynamic-footstep', alt: 'Footstep Data Asset entry for the Stone surface tag, defining its Foot Step Run Sound, FX, and Decal', caption: 'Dynamic Footstep System' },
@@ -33,7 +33,7 @@ const audio = {
     {
       heading: 'Dynamic Combat Hit VFX/SFX and Camera Shake',
       paragraphs: [
-        'Combat feedback is tightly integrated with the damage pipeline. Successful hits trigger distinct impact sounds and VFX, while parries and counterattacks play unique audio cues to emphasize timing and mastery. These responses are driven by gameplay events, animation notifies, and customizable sound cues, ensuring that audio and visual feedback remain perfectly synchronized with combat actions.',
+        'Combat feedback hangs off the damage pipeline. A landed hit fires its own impact sound and VFX; parries and counterattacks get their own cues so good timing sounds like good timing. All of it is driven by gameplay events, animation notifies and configurable sound cues, which keeps the audio and visuals in step with the action.',
       ],
       media: [],
     },

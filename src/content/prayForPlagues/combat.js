@@ -2,36 +2,36 @@ const combat = {
   id: 'combat',
   title: 'Combat System',
   summary:
-    'An animation-driven melee framework built for weighty attacks, precise timing windows, and readable feedback — modular and data-driven so new weapons and movesets need no core logic changes.',
+    'An animation-driven melee framework built for weighty attacks, tight timing windows and readable feedback. It is modular and data-driven, so new weapons and movesets drop in without touching core logic.',
   sections: [
     {
       heading: 'Overview',
       paragraphs: [
-        'The combat system is built around a Souls-borne inspired, animation-driven framework designed to deliver weighty attacks, precise timing windows, and clear player feedback. Each weapon features its own unique animation layer, complete with distinct light and heavy attack chains, special attacks with cooldowns, and combo-based damage multipliers that reward commitment and mastery.',
-        'Combat interactions are fully systemic: hitboxes are synchronized with animation events, parryable attacks follow strict telegraph rules, and both player and enemies use a shared directional hit reaction system that reinforces impact and readability. The system is modular, data-driven, and designed for scalability — new weapons, movesets, and attack behaviors can be added without modifying core logic.',
-        'This page breaks down the architecture, design goals, implementation details, and engineering decisions behind the combat system, supported by GIFs demonstrating attack chains, parries and hit reactions in action.',
+        'Combat is an animation-driven framework in the Souls-borne mould: weighty attacks, tight timing windows, and feedback the player can read. Each weapon gets its own animation layer with its own light and heavy chains, special attacks on cooldown, and combo damage multipliers that pay off commitment.',
+        'Everything runs through the same systems. Hitboxes are driven by animation events, parryable attacks follow strict telegraph rules, and player and enemies share one directional hit reaction system so impacts land the same way for both. New weapons, movesets and attack behaviors are data, not code changes.',
+        'This page walks through the architecture, the design goals and the decisions behind them, with GIFs of attack chains, parries and hit reactions running.',
       ],
       media: [],
     },
     {
       heading: 'Design Goals',
       paragraphs: [
-        'The combat system is built around core design goals inspired by Souls-borne combat philosophy: deliberate actions, readable enemy intent, and punishing-but-fair encounters. Every mechanic — from attack chains to parry windows — is designed to reinforce clarity, weight, and player mastery.',
-        'Combat must feel committed, attacks have meaningful recovery, timing matters, and players are rewarded for understanding spacing, telegraphs, and combo flow. Weapon identity is central to the experience, so each weapon has a unique moveset, animation layer, and damage profile that supports different playstyles.',
-        'Enemy behavior and player feedback are tightly integrated. Telegraphs must be readable, parryable attacks must follow consistent rules, and hit reactions must communicate impact clearly without disrupting combat flow. The system prioritizes responsiveness, consistency, and scalability, so new weapons, attacks, and enemy behaviors can be added without rewriting core logic.',
-        'These goals guide every architectural decision in the combat system, shaping how attacks are animated, how damage is calculated, and how players read danger and opportunity during encounters.',
+        'The design goals come straight from Souls-borne combat: deliberate actions, readable enemy intent, encounters that punish you fairly. Every mechanic, from attack chains to parry windows, exists to support clarity, weight and mastery.',
+        'Attacks have to feel committed. Recovery frames matter, timing matters, and reading spacing, telegraphs and combo flow is what carries a fight. Weapon identity does a lot of that work, so each weapon has its own moveset, animation layer and damage profile for a different playstyle.',
+        'Enemy behavior and player feedback are built together. Telegraphs have to be readable, parryable attacks have to follow the same rules every time, and hit reactions have to sell the impact without stalling the fight. Responsiveness and consistency come first, then room to add weapons, attacks and enemy behaviors without rewriting anything.',
+        'Those goals drove the architecture: how attacks are animated, how damage is calculated, and how the player reads danger and opportunity mid-fight.',
       ],
       media: [],
     },
     {
       heading: 'Animation Layers, Move-sets & Attack Chains',
       paragraphs: [
-        'At the core of the system is the Weapon Framework, which assigns each weapon its own animation layer and moveset. Light and heavy attack chains are defined through data assets that specify animation sequences, combo routing, damage values, and special attack cooldowns. This allows new weapons and movesets to be added without modifying core combat logic.',
-        'Attack execution is fully synchronized with animation events. Hitboxes are spawned at specific frames, combo counters are updated based on animation state transitions, and parry windows are defined through event markers that ensure consistent timing across all weapons. The system supports both standard and special attacks, each with unique multipliers and behavior rules.',
-        'The player has distinct animation-driven states for being unequipped, and for equipping light, heavy, and (planned) dual-wield weapons — each with its own moveset. A dual-wield player state is planned but not yet implemented.',
-        'Damage calculation flows through a centralized pipeline: base weapon damage, combo multipliers, special attack modifiers, and enemy-specific resistances (if present). This pipeline ensures consistent results across player and AI attacks and simplifies debugging and balancing.',
-        'The Hit Reaction System is integrated directly into the architecture. Both player and enemies use a shared directional reaction logic that determines impact direction and selects the appropriate animation. Bosses can selectively disable hit reactions through simple configuration flags, preserving their intended combat presence without altering the underlying system. Each player state has its own unique hit reaction animations.',
-        'Bosses exclusively may have a weighted random chance of triggering a hit reaction, for difficulty purposes. The setting can easily be adjusted within the enemy’s Gameplay Ability.',
+        'The Weapon Framework sits at the center and gives each weapon its own animation layer and moveset. Light and heavy chains live in data assets that hold the animation sequences, combo routing, damage values and special attack cooldowns, so a new weapon is a new data entry rather than new combat code.',
+        'Attack execution is driven entirely by animation events. Hitboxes spawn on specific frames, combo counters update on animation state transitions, and parry windows are marked by events so timing stays identical across every weapon. Standard and special attacks both go through this, each with their own multipliers and rules.',
+        'The player has separate animation-driven states for unequipped, light weapon and heavy weapon, each with its own moveset. A dual-wield state is planned but not built yet.',
+        'Damage runs through one pipeline: base weapon damage, combo multipliers, special attack modifiers, and enemy resistances where they exist. Player and AI attacks use the same path, which keeps results consistent and makes debugging and balancing far less painful.',
+        'Hit reactions are part of the same architecture. Player and enemies share the directional logic that works out impact direction and picks the animation. Bosses can switch reactions off with a config flag, which keeps their combat presence intact without a special case in the system. Each player state has its own reaction animations.',
+        'Bosses alone can be given a weighted random chance of reacting at all, purely as a difficulty lever. That weight lives in the enemy’s Gameplay Ability and is quick to tune.',
       ],
       media: [
         { key: 'combat-state-unequipped', alt: 'Player character in the unequipped combat state', caption: 'Unequipped Player State' },
@@ -46,9 +46,9 @@ const combat = {
     {
       heading: 'Hitbox & Hurtbox System',
       paragraphs: [
-        'The hitbox and hurtbox system is built around a precise, animation-driven collision workflow that ensures attacks feel fair, consistent, and tightly synchronized with weapon motion. The system uses weapon-based hitboxes that interact with the target’s capsule collider, allowing for clean, predictable detection across both player and enemy characters.',
-        'During an attack, the weapon’s hitbox is activated through an AnimNotifyState placed directly inside the attack montage. This notify defines the exact window in which the weapon can deal damage, ensuring that collision is only enabled during the correct animation frames. When the notify begins, the weapon’s hitbox becomes active; when it ends, collision is disabled again. This approach guarantees that timing, spacing, and animation readability remain consistent across all weapons and movesets.',
-        'When the hitbox overlaps a capsule, the system performs a hostility check to determine whether the target is a valid enemy or player. If the target is hostile, the damage pipeline is triggered, applying the appropriate values based on weapon type, combo count, and special attack modifiers.',
+        'Collision is animation-driven so attacks stay fair, consistent and locked to the weapon’s actual motion. Weapon hitboxes test against the target’s capsule collider, which keeps detection predictable for the player and enemies alike.',
+        'The hitbox is switched on by an AnimNotifyState placed inside the attack montage. That notify is the damage window: collision turns on when it begins and off when it ends, so the weapon can only hit during the frames it should. Timing, spacing and readability then stay consistent across every weapon and moveset.',
+        'On overlap, a hostility check decides whether the capsule belongs to a valid target. If it does, the damage pipeline runs and applies values based on weapon type, combo count and any special attack modifiers.',
       ],
       media: [
         { key: 'combat-damage-player', alt: 'Damage application demonstrated on the player character', caption: 'Damage Application Only On Player' },
@@ -58,9 +58,9 @@ const combat = {
     {
       heading: 'Parry System',
       paragraphs: [
-        'The parry system is built around a timed, animation-driven window that allows the player to negate incoming damage and immediately transition into a counterattack. The mechanic is designed to feel precise, rewarding, and consistent with Souls-borne combat philosophy, where timing and commitment define success.',
-        'When the player initiates a parry attempt, a dedicated parry animation is played. Inside this montage, a carefully placed parry window grants the player a temporary gameplay tag that marks them as "parry-ready." This tag represents the active parry state and ensures that the timing of the mechanic is fully synchronized with the animation frames.',
-        'During this window, if an enemy attack connects, the combat system checks whether the player currently holds the parry tag. If the tag is present, the incoming damage is completely negated, and the system transitions the player into a successful parry animation. This animation features distinct visual and audio feedback — reinforcing the impact and clarity of the mechanic — and overrides the standard hit reaction logic while also granting a counter-attack opportunity.',
+        'The parry is a timed, animation-driven window that cancels incoming damage and rolls straight into a counterattack. It should feel sharp and worth the risk, in line with the rest of the combat, where timing and commitment decide the fight.',
+        'A parry attempt plays a dedicated animation. Inside that montage, a tuned window grants a temporary gameplay tag marking the player as "parry-ready." The tag is the active parry state, which keeps the mechanic tied to the animation frames rather than a separate timer.',
+        'If an enemy attack connects during that window, combat checks for the tag. With the tag present, the damage is fully negated and the player moves into the successful parry animation, which has its own VFX and audio, overrides the normal hit reaction, and opens the counter-attack.',
       ],
       media: [
         { key: 'combat-parry', alt: 'Player successfully parrying an enemy attack and following up with a counter-attack', caption: 'Parry & Counter-Attack' },
@@ -69,11 +69,11 @@ const combat = {
     {
       heading: 'Weapon Framework',
       paragraphs: [
-        'The weapon framework is built around a data-driven architecture that allows each weapon to define its own behavior, moveset, and gameplay identity without requiring changes to core combat logic. All weapon data is stored in a centralized UDataTable, which manages every item in the game. Weapons extend this structure with additional fields that define their combat functionality, animation behavior, and special abilities.',
-        'Each weapon entry contains its own Weapon Animation Layer, which determines the moveset the player uses when the weapon is equipped. This includes unique light and heavy attack chains, special attacks, dodge animations, and custom hit reaction montages. By assigning animation layers per weapon, the system ensures that switching weapons immediately updates the player’s entire combat profile.',
-        'Weapons also define their Damage-Scalable-Float, allowing damage to scale dynamically based on player level or progression. This keeps balancing centralized and makes tuning weapon strength straightforward. Special abilities and weapon skills are also stored in the weapon’s data entry, enabling the framework to grant abilities automatically when the weapon is equipped.',
-        'To support responsiveness and clarity, each weapon includes its own Mapping Context, which updates the player’s input profile when switching weapons. This allows different weapons to introduce unique control schemes or special attack inputs without affecting other weapons.',
-        'Cooldowns for weapon abilities are managed through a Curve-Table, which defines cooldown durations and scaling behavior. This keeps cooldown logic flexible and data-driven, allowing designers to adjust ability pacing without modifying code.',
+        'The weapon framework is data-driven, so each weapon defines its own behavior, moveset and identity without core combat changes. Weapon data lives in the same central UDataTable that manages every item in the game; weapons just extend that structure with extra fields for combat function, animation behavior and special abilities.',
+        'Every entry carries a Weapon Animation Layer that decides the moveset while it is equipped: light and heavy chains, special attacks, dodge animations and custom hit reaction montages. Because the layer is per weapon, swapping weapons swaps the player’s whole combat profile at once.',
+        'Weapons also define a Damage-Scalable-Float so damage can scale with player level or progression. Balancing stays in one place and tuning a weapon is a single value. Special abilities and weapon skills sit in the same entry, so the framework grants them automatically on equip.',
+        'Each weapon also ships its own Mapping Context, which swaps the player’s input profile on equip. A weapon can introduce its own control scheme or special attack input without touching any other weapon.',
+        'Ability cooldowns come from a Curve Table that holds durations and scaling, so ability pacing can be retuned as data instead of code.',
       ],
       media: [
         { key: 'combat-weapon-data', alt: 'Weapon data table entry showing per-weapon combat properties', caption: 'Weapon data entry in the UDataTable' },
@@ -82,10 +82,10 @@ const combat = {
     {
       heading: 'Lock On Target System',
       paragraphs: [
-        'The lock-on system provides the player with precise control over combat targeting, ensuring that attacks, movement, and camera behavior remain focused on a selected enemy. When activated, the system identifies the nearest valid target based on distance, angle, and visibility, then anchors the camera and player orientation toward that enemy.',
-        'Lock-on directly integrates with the combat framework. Attack direction, hitbox alignment, and the 4-direction hit reaction system all use the locked target as a reference point, ensuring consistent and readable combat behavior. The system also supports dynamic target switching, allowing the player to cycle between nearby enemies during multi-target encounters. Additionally, when an enemy is defeated the lock-on will switch to the next nearby target.',
-        'If no target is discovered during a lock-on attempt, the camera will perform a reset relative to the player’s forward vector. Naturally, if the player dies during a lock-on, the lock-on will be canceled out.',
-        'By combining spatial checks, camera alignment, and combat integration, the lock-on system enhances clarity, responsiveness, and player control — especially in encounters where positioning and timing are critical.',
+        'Lock-on gives the player firm control over targeting, keeping attacks, movement and camera pointed at one enemy. On activation it picks the nearest valid target by distance, angle and visibility, then anchors the camera and the player’s orientation to it.',
+        'It plugs straight into the combat framework: attack direction, hitbox alignment and the 4-direction hit reaction system all use the locked target as their reference. The player can cycle between nearby enemies mid-fight, and when a target dies lock-on moves to the next one nearby.',
+        'If nothing valid is found, the camera resets relative to the player’s forward vector. If the player dies while locked on, lock-on is cancelled.',
+        'Between the spatial checks, camera alignment and combat integration, it does a lot for clarity and control, most of all in fights where positioning and timing decide the outcome.',
       ],
       media: [
         { key: 'combat-lock-on-switch', alt: 'Player locking onto a target and switching between nearby enemies', caption: 'Lock On Target & Switch Target' },
@@ -96,7 +96,7 @@ const combat = {
     {
       heading: 'Foot IK System',
       paragraphs: [
-        'The Foot IK system ensures that the character’s feet align naturally with uneven terrain, improving grounding, stability, and animation fidelity during movement and combat. The system performs a downward trace from each foot to detect the slope or surface beneath the character, then adjusts the leg bones and pelvis position to match the terrain. This prevents foot sliding and floating, especially on angled or irregular surfaces.',
+        'Foot IK keeps the character’s feet planted on uneven terrain, which helps grounding and animation fidelity while moving and fighting. Each foot traces downward to find the slope beneath it, then the leg bones and pelvis are adjusted to match. That clears up the sliding and floating you otherwise get on angled or broken surfaces.',
       ],
       media: [
         { key: 'combat-foot-ik', alt: 'Character feet adjusting to align with uneven terrain via the Foot IK system', caption: 'Foot IK' },

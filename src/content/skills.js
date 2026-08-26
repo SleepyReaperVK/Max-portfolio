@@ -2,7 +2,7 @@ const skills = [
   {
     name: 'C++',
     category: 'Language',
-    blurb: 'Core gameplay systems, GAS attributes, and combat framework.',
+    blurb: 'Core gameplay systems, GAS attributes and the combat framework.',
   },
   {
     name: 'Python',
@@ -12,17 +12,17 @@ const skills = [
   {
     name: 'Unreal Engine 5',
     category: 'Engine',
-    blurb: 'Primary engine for all gameplay, AI, and combat systems in Pray For Plagues.',
+    blurb: 'The engine behind every gameplay, AI and combat system in Pray For Plagues.',
   },
   {
     name: 'Blueprints',
     category: 'Tool',
-    blurb: 'Prototyping and AI behavior tasks alongside the C++ codebase.',
+    blurb: 'Prototyping and AI behavior tasks that sit alongside the C++ code.',
   },
   {
     name: 'Blender',
     category: 'Tool',
-    blurb: 'Part of the project tech stack alongside Unreal Engine 5 and C++.',
+    blurb: 'Used on this project alongside Unreal Engine 5 and C++.',
   },
 ]
 
